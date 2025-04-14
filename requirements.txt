@@ -1,0 +1,13 @@
+flask
+json
+flask_cors
+pickle
+numpy
+scipy
+datetime
+matplotlib
+re
+collections
+networkx
+math
+itertools
