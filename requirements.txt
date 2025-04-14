@@ -1,0 +1,9 @@
+flask
+flask_cors
+numpy
+scipy
+datetime
+collections
+networkx
+math
+itertools
