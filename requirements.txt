@@ -1,5 +1,4 @@
 flask
-json
 flask_cors
 pickle
 numpy
