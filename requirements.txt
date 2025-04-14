@@ -1,6 +1,0 @@
-flask
-flask_cors
-numpy
-scipy
-networkx
-itertools
