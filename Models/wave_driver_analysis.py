@@ -314,10 +314,7 @@ def generate_business_narrative(factor1, factor2):
     
     result = {
         "narrative": narrative,
-        "wave_graph_data": {
-            factor1: wave1["refined_wave"].tolist() if wave1["refined_wave"].size > 0 else [],
-            factor2: wave2["refined_wave"].tolist() if wave2["refined_wave"].size > 0 else []
-        }
+
     }
     
     return result

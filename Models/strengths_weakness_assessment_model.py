@@ -343,30 +343,27 @@ def losses(outcome):
     
     weaknesses = sorted_by_effect[-8:]
 
-    if weaknesses != None:
-            
-        #print("\n\n", weaknesses)
+    print(weaknesses)
 
+    
+
+    if weaknesses != []:            
+        #print("\n\n", weaknesses)
         weaknesses_str = "\n".join([
-            f"• **{entry['name']}** : {outcome.capitalize()} impact increased by {abs(entry[outcome]):.2f}%, with a increase of {abs(entry['unified_business_profile']):.2f}% in the business profile and a potential ROI gain of ${abs(entry['financial_impact']):.2f}.\n \n"
+            f"- **{entry['name']}** : {outcome.capitalize()} impact increased by {abs(entry[outcome]):.2f}%, with a increase of {abs(entry['unified_business_profile']):.2f}% in the business profile and a potential ROI gain of ${abs(entry['financial_impact']):.2f}.\n\n"
             for entry in weaknesses
         ])
-
-
-
-
-        summary = (
-            "-----------------------------\n\n"
-            
-            f" ## Overview:\n\n"
-            f"Yes, their exists some inefficiencies that are not driving revenue adequately. "
-            f"The following are your areas of vulnerability which are making losses and not enough per $1000 investment\n\n"
-            f" ### **Areas of Vulnerability:**\n\n"
+        summary = (          
+            f"Yes, their exists some inefficiencies that are not driving revenue adequately.\n\n"            
             f"{weaknesses_str}\n\n"
-            f"### **Detailed Analysis:**\n"
             
-            
-
         )
+    elif weaknesses == []:
+                summary = (
+            
+            f"There are no inefficiencies"
+            
+            )
+
     return summary
 

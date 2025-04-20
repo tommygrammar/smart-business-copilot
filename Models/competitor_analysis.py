@@ -113,7 +113,7 @@ def bayesian_competitor_analysis():
         else:
             evidence = "little support for a negative competitor effect"
         return (
-            f"For {name}, the estimated effect is {mean:.2f} (95% CI: [{lower:.2f}, {upper:.2f}]) with a {p_negative:.1%} probability of a negative impact, indicating {evidence}."
+            f"For {name}, your sales reduced by around {mean:.2f} (95% CI: [{lower:.2f}, {upper:.2f}]) with a {p_negative:.1%} probability of a negative impact, indicating {evidence}."
         )
 
     conclusion_beta2 = interpret_competitor_effect(
@@ -133,18 +133,9 @@ def bayesian_competitor_analysis():
         f"{conclusion_beta2}\n\n"
         "### Sustained Competitor Pressure\n"
         f"{conclusion_beta3}\n\n"
-        "### Strategic Insights\n"
-        "- **Immediate Defense:** A sharp drop suggests the need for countermeasures at competitor entry (e.g., targeted campaigns or loyalty incentives).\n"
-        "- **Longer-Term Mitigation:** The sustained downward slope indicates ongoing competitive pressure; consider product differentiation or enhanced value propositions.\n"
-        "- **Actionable Recommendations:** Monitor competitor promotions closely, adjust pricing or bundles in real time, and reinforce customer engagement to offset losses.\n"
+
     )
 
-    graph_data = {
-        "time": time.tolist(),
-        "sales": sales.tolist(),
-        "competitor_launch": comp_launch,
-        "competitor_end": comp_launch + comp_duration
-    }
 
-    return {"narrative": narrative, "impact_graph_data": graph_data}
+    return {"narrative": narrative}
 

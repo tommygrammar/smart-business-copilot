@@ -11,12 +11,12 @@ def stockout():
     # -------------------------------
 
     n_simulations = 100000      # number of Monte Carlo paths
-    simulation_days =30        # simulation period (days)
+    simulation_days =50        # simulation period (days)
     starting_inventory = historical_data['inventory'][-1]
 
     # Demand parameters (synthetic, representing a small business in Kenya)
-    mean_daily_demand = 5    # average demand (units per day)
-    std_daily_demand = 10      # standard deviation of daily demand
+    mean_daily_demand = 6    # average demand (units per day)
+    std_daily_demand = 5      # standard deviation of daily demand
 
     # -------------------------------
     # Monte Carlo Simulation for Stockout
@@ -57,6 +57,19 @@ def stockout():
         avg_time_to_stockout = float('nan')
         lower_bound, upper_bound = float('nan'), float('nan')
 
+    print(stockout_probability)
+
+    if stockout_probability <= 5 and stockout_probability > 0:
+        statement = f"There is a very small chance of a stockout. Your current stock is healthy. Make sure you restock before day **{lower_bound}**"
+    elif stockout_probability == 0:
+        statement = f"Your stock is healthy"
+    elif stockout_probability > 5 and stockout_probability < 20:
+        statement = f"There is a chance you will have a stockout. Risk is still low though but significant. Make sure you restock before day **{lower_bound}**"
+    elif stockout_probability > 20 and stockout_probability < 50:
+        statement = f"High chances of a stockout. Be careful and make sure you restock before day **{lower_bound}**"
+    elif stockout_probability > 50 and stockout_probability <= 100:
+        statement = f"Incredibly high chances of a stockout. Make sure you restock before day **{lower_bound}**"
+
     # -------------------------------
     # Prepare and Print Findings (Non-Technical Summary)
     # -------------------------------
@@ -65,8 +78,7 @@ def stockout():
 
 
     f"# Stockout Analysis\n"
-    f"Based on 100,000 simulations with historical analysis,the product is likely to run out of stock within **{simulation_days}** days with a probability of **{stockout_probability:.2f}%**.\n"
-    f"For cases where stockout occurs, the average time to stockout is approximately **{avg_time_to_stockout:.2f}** days,with a 95% confidence range between **{lower_bound:.2f}** and **{upper_bound:.2f}** days. These findings directly inform inventory planning decisions to avoid overstocking or understocking.\n"
+    f"{statement}\n"
     
     )
 

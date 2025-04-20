@@ -5,14 +5,9 @@ import math
 from Models.wave_driver_analysis import generate_business_narrative
 from Models.deep_wave_driver_analysis_period_support import trend_generate_business_narrative
 from Data.business_data import historical_data
-from Models.strengths_weakness_assessment_model import find_weaknesses, find_strengths, losses
-from Models.gradient_ascent_sensitivity_allocation_model import optimize
-from Models.business_twin_sensitivity_model import business_twin
+from Models.strengths_weakness_assessment_model import losses
 from Models.official_business_summary import create_business_summary
-import pickle
 from Models.impact_analysis_model import bayesian_impact as impact_analysis
-from Models.risk_model import run_risk_analysis
-from Models.event_probability_models import calculate_event_probability
 from Models.competitor_analysis import bayesian_competitor_analysis
 from Models.cash_flow import weekly_cashflow_sales_analysis
 from Models.supply_chain_fragility import supply_chain_fragility
@@ -20,8 +15,8 @@ from Models.stockout import stockout
 from Models.sales_time import time_analysis
 from Models.demand_analysis import demand_analysis
 from Models.product_segmentation import type_shit
-# Use combinations of distinct factors for analysis comparisons.
-from itertools import combinations
+from Models.metrics import how_much_inventory, how_much_revenue, how_much_sales
+# Use combinations of distinct factors for analysis compar
 from collections import defaultdict
 
 
@@ -218,29 +213,8 @@ class ProbabilisticLanguageModel:
                 function_name = best_response.split("invoke:")[1].strip()
                 #print(f"[DEBUG] Invoking function: '{function_name}' based on best training query")
                 # If the best training query is of type business_twin, use extraction.
-                if function_name.startswith("business_twin"):
-                    lower_query = query.lower()
-                    twin_pattern = r'\b((?:increased|increasin(?:g))|boost(?:ed|ing)?|raise(?:d|ing)?|(?:decrease(?:d)?|decreasin(?:g))|drop(?:ped|ing)?)\s+([A-Za-z\s]+)\s+(?:by|of)\s+(\d+(?:\.\d+)?)(\%?)\b'
-                    twin_match = re.search(twin_pattern, lower_query, re.IGNORECASE)
-                    if twin_match:
-                        action = twin_match.group(1).strip()
-                        factor_str = twin_match.group(2).strip()
-                        value_str = twin_match.group(3).strip()
-                        percent_sign = twin_match.group(4).strip()
-                        try:
-                            rate_value = float(value_str)
-                        except ValueError:
-                            resp = "Could not extract numeric parameters for business twin from best training query."
-                        else:
-                            if action.startswith("decrease") or action.startswith("decreasin") or action.startswith("drop"):
-                                rate_value = -abs(rate_value)
-                            else:
-                                rate_value = abs(rate_value)
-                            resp = business_twin(factor_str, rate_value)
-                    else:
-                        resp = "Could not extract parameters for business twin from best training query."
 
-                elif function_name == "analyze_drivers":
+                if function_name == "analyze_drivers":
                     lower_query = query.lower()
                     factors_found = []
                     for factor in self.domain_factors:
@@ -255,56 +229,7 @@ class ProbabilisticLanguageModel:
                         factor1, factor2 = factors_found[0][1], factors_found[1][1]
                     else:
                         factor1, factor2 = "sales", "revenue"
-                    resp = generate_business_narrative(factor1, factor2)
-                elif function_name.startswith("optimize"):
-                    lower_query = query.lower()
-                    fixed_m = None
-                    fixed_s = None
-                    m_mark = re.search(r'(reduce|decrease|increase|boost).*?marketing.*?(?:by|at|to)\s*(\-?\d[\d,\.]*)', lower_query)
-                    if m_mark:
-                        action = m_mark.group(1)
-                        value = float(m_mark.group(2).replace(',', ''))
-                        fixed_m = -abs(value) if action in ["reduce", "decrease"] else abs(value)
-                        constant_mode = "marketing_constant"
-                    m_sales = re.search(r'(reduce|decrease|increase|boost).*?sales.*?(?:by|at|to)\s*(\-?\d[\d,\.]*)', lower_query)
-                    if m_sales:
-                        action = m_sales.group(1)
-                        value = float(m_sales.group(2).replace(',', ''))
-                        fixed_s = -abs(value) if action in ["reduce", "decrease"] else abs(value)
-                        constant_mode = "sales_constant"
-                    if fixed_m is None and fixed_s is None:
-                        if "keep my sales constant" in lower_query or re.search(r'\bsales\b.*\bconstant\b', lower_query):
-                            constant_mode = "sales_constant"
-                        elif "keep my marketing constant" in lower_query or re.search(r'\bmarketing\b.*\bconstant\b', lower_query):
-                            constant_mode = "marketing_constant"
-                        else:
-                            constant_mode = "none"
-                    match = re.search(r'(\d[\d,\.]*)\s*(?:revenue)', lower_query)
-                    if match:
-                        target = float(match.group(1).replace(',', ''))
-                    else:
-                        numbers = re.findall(r'\d[\d,\.]*', lower_query)
-                        target = float(numbers[-1].replace(',', '')) if numbers else 0.0
-                    if constant_mode == "sales_constant" and fixed_s is None:
-                        fixed_s = 0.0
-                    if constant_mode == "marketing_constant" and fixed_m is None:
-                        fixed_m = 0.0
-                    resp = optimize(constant_mode, target, fixed_m, fixed_s)
-                elif function_name.startswith("find_weaknesses"):
-                    match = re.match(r"find_weaknesses\((\w+)\)", function_name)
-                    if match:
-                        factor = match.group(1)
-                        resp = find_weaknesses(factor)
-                    else:
-                        resp = "Function not recognized (weakness)."
-                elif function_name.startswith("find_strengths"):
-                    match = re.match(r"find_strengths\((\w+)\)", function_name)
-                    if match:
-                        factor = match.group(1)
-                        resp = find_strengths(factor)
-                    else:
-                        resp = "Function not recognized (strengths)."
-                
+                    resp = generate_business_narrative(factor1, factor2) 
                 elif function_name.startswith("show_summary"):
                     resp = create_business_summary()
                 elif function_name.startswith("deep_analysis"):
@@ -328,10 +253,6 @@ class ProbabilisticLanguageModel:
                     resp = trend_generate_business_narrative(factor1, factor2, days)
                 elif function_name.startswith("impact_analysis"):
                     resp = impact_analysis()
-                elif function_name.startswith("risk_modeling"):
-                    resp = run_risk_analysis("revenue")
-                elif function_name.startswith("event_analysis"):
-                    resp = calculate_event_probability("revenue", 651.4, 98, use_gbm=False, use_rolling_window=True, plot_residuals=False)
                 elif function_name.startswith("competitor_analysis"):
                     resp = bayesian_competitor_analysis()
                 elif function_name.startswith("cashflow_analysis"):
@@ -348,6 +269,13 @@ class ProbabilisticLanguageModel:
                     resp = type_shit()
                 elif function_name.startswith("loss"):
                     resp = losses("revenue")
+                elif function_name.startswith("how_many_sales"):
+                    resp = how_much_sales(1)
+                elif function_name.startswith("how_much_revenue"):
+                    resp = f" {how_much_revenue(1)}"
+                elif function_name.startswith("how_much_inventory"):
+                    resp = how_much_inventory(1)
+
 
 
 
