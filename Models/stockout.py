@@ -57,7 +57,7 @@ def stockout():
         avg_time_to_stockout = float('nan')
         lower_bound, upper_bound = float('nan'), float('nan')
 
-    print(stockout_probability)
+    
 
     if stockout_probability <= 5 and stockout_probability > 0:
         statement = f"There is a very small chance of a stockout. Your current stock is healthy. Make sure you restock before day **{lower_bound}**"
@@ -82,6 +82,6 @@ def stockout():
     
     )
 
-    #print(output_summary)
+    
     return output_summary
 

@@ -70,8 +70,6 @@ def create_business_summary():
     )
 
     result = {
-        "narrative": narrative
-        
+        "narrative": narrative     
     }
-    
     return result

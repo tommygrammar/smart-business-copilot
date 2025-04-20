@@ -104,6 +104,7 @@ for factor in additional_factors:
     model.train(f"how {query_factor} is {query_factor} this <days> days ", "invoke: deep_analysis")
     model.train(f"how has {query_factor} and {query_factor} been for the past <days> days", "invoke: deep_analysis")
     model.train(f"how has {query_factor} and {query_factor} been for the last <days> days", "invoke: deep_analysis")
+    model.train(f" {query_factor} na {query_factor} yangu imekuwa aje past <days> days", "invoke: deep_analysis")
 
 # Closing and courtesy pairs
 model.train("thank you", "You are welcome. Feel free to approach me with anything to do with your business that i can help you with.")

@@ -1,7 +1,6 @@
 import numpy as np
 from scipy.stats import invgamma, t  # Used for inverse gamma sampling and t-distribution predictions
 
-
 def bayesian_competitor_analysis():
     # ----------------------------------------
     # 1. Data Simulation (Synthetic Data)
@@ -135,7 +134,4 @@ def bayesian_competitor_analysis():
         f"{conclusion_beta3}\n\n"
 
     )
-
-
     return {"narrative": narrative}
-

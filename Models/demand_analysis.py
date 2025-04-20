@@ -92,6 +92,4 @@ def demand_analysis():
     f"- Estimated daily purchase probability: **{p_expected:.2f}**\n"
     f"- 95% Credible Interval: **[{credible_interval[0]:.2f}, {credible_interval[1]:.2f}]**\n"
     )
-
-    #print(non_technical_output)
     return non_technical_output

@@ -294,7 +294,3 @@ class ProbabilisticLanguageModel:
 
 # Revenue Analysis Training Pairs
 model = ProbabilisticLanguageModel()
-
-
-#response_obj = model.process_query("hi")
-#print(response_obj)

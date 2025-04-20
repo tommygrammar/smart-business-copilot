@@ -1,7 +1,5 @@
 import numpy as np
-
 from Data.business_data import historical_data
-
 # ---------------------------
 # Define the full set of factors.
 # ---------------------------
@@ -234,20 +232,15 @@ def find_weaknesses(outcome):
                     "unified_business_profile": business_profile_change,
                     "financial_impact": financial_impact 
                 }
-                #print(result["name"], result[outcome])
+                
                 results_table.append(result)
 
     # Sort candidates by the outcome change (driver effect) in descending order.
     sorted_by_effect = sorted(results_table, key=lambda x: x["financial_impact"] if x["financial_impact"] < 1000 else float('inf'), reverse=True)
 
-    #print(sorted_by_effect,"\n\n")
-    
-    
-
     # Extract top 3 strengths and bottom 3 weaknesses.
     
     weaknesses = sorted_by_effect[-8:]
-    #print("\n\n", weaknesses)
 
     weaknesses_str = "\n".join([
         f"• **{entry['name']}** : {outcome.capitalize()} impact increased by {abs(entry[outcome]):.2f}%, with a increase of {abs(entry['unified_business_profile']):.2f}% in the business profile and a potential ROI gain of ${abs(entry['financial_impact']):.2f}.\n An ROI of less than $1000 signifies a potential loss. \n"
@@ -264,9 +257,7 @@ def find_weaknesses(outcome):
         f"This analysis compared changes in {outcome} performance and the overall business profile, while also estimating potential returns based on a baseline investment of $1000.\n\n"
         f" ### **Areas of Vulnerability:**\n\n"
         f"{weaknesses_str}\n\n"
-        f"### **Detailed Analysis:**\n"
-        
-        
+        f"### **Detailed Analysis:**\n"       
         f"This underperformance is linked to notable declines in {outcome} performance and overall business health, with potential ROI gains falling below the investment threshold.\n\n"
         f" ### **Recommendations:**\n"
         f"- **Address Vulnerabilities:** Focus on identifying the root causes behind the weak drivers and implement targeted strategies to mitigate losses and improve overall performance.\n\n"
@@ -278,13 +269,6 @@ def find_weaknesses(outcome):
 
 
 def losses(outcome):
-    
-    """
-    For a given outcome factor (e.g., "sales" or "revenue"), this function
-    computes the effect of forcing each candidate driver (all factors except the outcome itself).
-    It then extracts the top 3 strengths and the bottom 3 weaknesses, and returns
-    a summary paragraph describing the potential losses and strengths.
-    """
     results_table = []
     # For each candidate driver (all factors except the outcome itself)
     for candidate in impact:
@@ -335,17 +319,10 @@ def losses(outcome):
     # Sort candidates by the outcome change (driver effect) in descending order.
     sorted_by_effect = sorted(results_table, key=lambda x: x["financial_impact"] if x["financial_impact"] < 1000 else float('inf'), reverse=True)
 
-    #print(sorted_by_effect,"\n\n")
-    
-    
-
     # Extract top 3 strengths and bottom 3 weaknesses.
     
     weaknesses = sorted_by_effect[-8:]
 
-    print(weaknesses)
-
-    
 
     if weaknesses != []:            
         #print("\n\n", weaknesses)
@@ -353,17 +330,8 @@ def losses(outcome):
             f"- **{entry['name']}** : {outcome.capitalize()} impact increased by {abs(entry[outcome]):.2f}%, with a increase of {abs(entry['unified_business_profile']):.2f}% in the business profile and a potential ROI gain of ${abs(entry['financial_impact']):.2f}.\n\n"
             for entry in weaknesses
         ])
-        summary = (          
-            f"Yes, their exists some inefficiencies that are not driving revenue adequately.\n\n"            
-            f"{weaknesses_str}\n\n"
-            
-        )
+        summary = (f"Yes, their exists some inefficiencies that are not driving revenue adequately.\n\n"            
+            f"{weaknesses_str}\n\n")
     elif weaknesses == []:
-                summary = (
-            
-            f"There are no inefficiencies"
-            
-            )
-
+                summary = (f"There are no inefficiencies")
     return summary
-

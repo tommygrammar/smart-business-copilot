@@ -6,6 +6,5 @@ def patched_train(query, response):
         return original_train(query, response)
     except Exception as e:
         return None
-
-# Always apply the monkey patch to the model training
+# Apply the monkey patch to the model training
 model.train = patched_train

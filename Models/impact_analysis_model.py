@@ -199,13 +199,10 @@ def bayesian_impact():
         f"{conclusion_beta2}\n\n"
         "### Sustained Growth\n"
         f"{conclusion_beta3}\n\n"
-
     )
-
 
     result ={
         "narrative": narrative_impact_summary
     }
-    
     # Return the narrative impact summary as the output of the function
     return result
