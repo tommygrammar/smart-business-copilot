@@ -1,5 +1,6 @@
 #how likely could this supply chain fail
 import numpy as np
+import math
 from scipy.stats import norm
 
 def supply_chain_fragility():

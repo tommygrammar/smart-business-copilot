@@ -1,3 +1,0 @@
-# POTENTIAL FEATURES
-
-- Credit profiling

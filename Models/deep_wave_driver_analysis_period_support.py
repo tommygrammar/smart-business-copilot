@@ -153,18 +153,18 @@ def cycle_behavior_description(series, refined_wave, factor_name, peak_distance,
             start_trough = troughs_before[-1]
             end_trough = troughs_after[0]
             description = (
-                f" **For {factor_name}**, a clear cycle began rising around day {start_trough + 1}, "
+                f"For {factor_name}, a clear cycle began rising around day {start_trough + 1}, "
                 f"peaked on day {last_peak + 1}, and declined to a low by day {end_trough + 1}."
             )
         elif len(troughs_before) > 0:
             start_trough = troughs_before[-1]
             description = (
-                f" **For {factor_name}**, the cycle started rising around day {start_trough + 1} and peaked on day {last_peak + 1}."
+                f"For {factor_name}, the cycle started rising around day {start_trough + 1} and peaked on day {last_peak + 1}."
             )
         elif len(troughs_after) > 0:
             end_trough = troughs_after[0]
             description = (
-                f" **For {factor_name}**, the cycle peaked on day {last_peak + 1} and then fell to a low around day {end_trough + 1}."
+                f"For {factor_name}, the cycle peaked on day {last_peak + 1} and then fell to a low around day {end_trough + 1}."
             )
         else:
             description = f"A significant peak for {factor_name} was observed on day {last_peak + 1}."
@@ -311,6 +311,7 @@ def trend_generate_business_narrative(factor1, factor2, period_length):
     Returns:
       A string with a comprehensive, plain-language narrative.
     """
+    print(f"Analyzing the past {period_length} days")
     # Hardcoded analysis parameters
     num_predictions = 10
     beta = 1e-4
@@ -468,11 +469,11 @@ def trend_generate_business_narrative(factor1, factor2, period_length):
     # Compose the final narrative
     narrative = (
         "-----------------------------\n\n"
-        f" ### {factor1.capitalize()} and {factor2.capitalize()} for {period_length} days Summary:\n\n"
-        f" #### Trend Predictions and Forecasts:\n"
+        f" #### {factor1.capitalize()} and {factor2.capitalize()} for {period_length} days Summary:\n\n"
+        f"Trend Predictions and Forecasts:\n"
         f"  - {forecast_statement1}\n"
-        f"  - {forecast_statement2}\n\n\n"
-        f" #### Dominant Cycle Characteristics:\n"
+        f"  - {forecast_statement2}\n\n"
+        f"Dominant Cycle Characteristics:\n"
         f"  For {factor1}:\n"
         f"    - Dominant cycle period: {details1['period']:.2f} days\n"
         f"    - Amplitude: {details1['amplitude']:.2f}\n"
@@ -481,17 +482,29 @@ def trend_generate_business_narrative(factor1, factor2, period_length):
         f"    - Dominant cycle period: {details2['period']:.2f} days\n"
         f"    - Amplitude: {details2['amplitude']:.2f}\n"
         f"    - {peak_duration_statement2} {trough_duration_statement2}\n\n"
-        f" #### Cycle Event Timing and Extreme Values:\n"
+        f"Cycle Event Timing and Extreme Values:\n"
         f"  - {cycle_behavior_statement1}\n"
         f"  - {additional_statement1}\n"
         f"  - {observed_trend1}\n\n"
         f"  - {cycle_behavior_statement2}\n"
         f"  - {additional_statement2}\n"
         f"  - {observed_trend2}\n\n"
-        f" #### Comparative Insights:\n"
+        f"Comparative Insights:\n"
         f"  - {comp_statement}\n"
         f"{comparison['friendly_summary']}\n"
         f"{comparison['match_summary']}\n"
     )
     
     return narrative
+
+# ---------------------------
+# Example Usage:
+# ---------------------------
+# Ensure that 'data' is defined globally, e.g.:
+# data = {
+#     "sales": np.random.randn(500),
+#     "revenue": np.random.randn(500)
+# }
+#
+# To analyze the last 60 days, simply call:
+#print(trend_generate_business_narrative("sales", "revenue", 60))

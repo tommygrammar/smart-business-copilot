@@ -2,4 +2,9 @@ flask
 flask_cors
 numpy
 scipy
+pandas
+statsmodel
+re
 networkx
+itertools
+

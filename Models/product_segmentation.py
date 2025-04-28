@@ -136,5 +136,5 @@ def type_shit():
     output_lines.append(f"Weak Products: {', '.join(weak_products)}\n")
 
     output_summary = "".join(output_lines)
-    
+    #print(output_summary)
     return output_summary

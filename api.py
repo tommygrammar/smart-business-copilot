@@ -17,8 +17,11 @@ def query_endpoint():
         return jsonify({'error': 'No query provided'}), 400
 
     query_text = data['query']
+    #print(query_text)
+
     # Pass the incoming query to the model
     response_obj = model.process_query(query_text)
+
     # Ensure consistent output formatting
     if isinstance(response_obj, dict):
         return jsonify(response_obj)

@@ -18,7 +18,7 @@ def weekly_cashflow_sales_analysis():
     historical_expenses = historical_data['operational_costs']
 
     # Assume a fixed unit price for product sales, e.g., 100 currency units per sale.
-    unit_price = 3.4
+    unit_price = 5
 
     # Assume initial cash balance (e.g., starting working capital)
     initial_cash = 0
@@ -77,27 +77,22 @@ def weekly_cashflow_sales_analysis():
     negative_cashflow_count = np.sum(final_cash_flows < 0)
     negative_cashflow_probability = (negative_cashflow_count / n_simulations) * 100
 
-    if negative_cashflow_probability <= 5 and negative_cashflow_probability > 0:
-        statement = "kuna a small chance cashflow itaenda vibaya. Lakini bado iko very strong as of now."
-    elif negative_cashflow_probability == 0:
-        statement = "cash flow iko fiti as of now"
-    elif negative_cashflow_probability > 5 and negative_cashflow_probability < 20:
-        statement = "chance a cashflow mbaya iko this week but si nyingi sana but bado uchunge. "
-    elif negative_cashflow_probability > 20 and negative_cashflow_probability < 50:
-        statement = "kuna chance kubwa cashflow itaenda vibaya this week. Chunga sana"
-    elif negative_cashflow_probability > 50 and negative_cashflow_probability <= 100:
-        statement = "sai cashflow ni mbaya. Tafuta options kama unaweza kuwa nazo."
-    
-
     # -------------------------------
     # Step 4: Findings Summary (Non-Technical Output)
     # -------------------------------
 
     output_summary = (
-    f" ## Weekly Sales and Cash Flow Analysis:\n"
+  f" ## Weekly Sales and Cash Flow Analysis:\n"
     f"-------------------------------------------\n"
-    f"- Uko likely kuuza at least**{sales_ci_lower:.2f} units** na at most inaweza fika around **{sales_ci_upper:.2f} units**.\n"
-    f"- The projected final cash flow iko likely kufika at least **KES {cashflow_ci_lower:.2f}** na at most around **KES {cashflow_ci_upper:.2f}**.\n"
-    f"- Based on current conditions and the sales forecast, **{statement}**\n"
+   f" Interpretation:\n"
+    f"-------------\n"
+
+    f"- Your business is likely to sell around **{mean_weekly_sales:.2f}** units in the upcoming week (with a 95% confidence interval between **{sales_ci_lower:.2f} and {sales_ci_upper:.2f} units)**.\n"
+    f"- Considering the current revenue **(at {unit_price} per unit)** and typical daily operating expenses, the projected final cash flow is expected to be **{mean_cash_flow:.2f}** units, with a 95% confidence interval of **[{cashflow_ci_lower:.2f}, {cashflow_ci_upper:.2f}]**.\n"
+    f"- There is a **{negative_cashflow_probability:.2f}%** chance that the cash flow will be negative, indicating potential financial risk if conditions do not improve.\n"
+
+
     )
+
+    #print(output_summary)
     return output_summary

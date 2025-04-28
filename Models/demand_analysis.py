@@ -11,7 +11,7 @@ def demand_analysis():
 
     # Define simulation period: 120 days (~4 months)
     start_date = datetime(2025, 1, 1)
-    n_days = 100
+    n_days = 120
     dates = [start_date + timedelta(days=i) for i in range(n_days)]
 
     # Define 10 synthetic products representing a small business in Kenya.
@@ -86,10 +86,14 @@ def demand_analysis():
 
     # -------- Non-Technical Dynamic Output --------
     non_technical_output = (
-    f"## Product Demand Probability Analysis for **{selected_product['product_name']} ({selected_product['product_id']}**):\n"
+    f"# Product Demand Probability Analysis for **{selected_product['product_name']} ({selected_product['product_id']}**):\n"
     f"- Observed period (days): **{n_observations}**\n"
     f"- Days with a purchase: **{n_success}** \n"
     f"- Estimated daily purchase probability: **{p_expected:.2f}**\n"
     f"- 95% Credible Interval: **[{credible_interval[0]:.2f}, {credible_interval[1]:.2f}]**\n"
+
+    f"These insights can guide stocking decisions to avoid overstocking or understocking.\n"
     )
+
+    #print(non_technical_output)
     return non_technical_output

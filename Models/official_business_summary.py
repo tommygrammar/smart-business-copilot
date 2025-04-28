@@ -40,9 +40,9 @@ def create_business_summary():
         if re.search(r'\bsales\b.*(major|driven)', line_strip, re.IGNORECASE):
             sales_driver_line = line_strip
         if "revenue is not solely driven by sales" in line_strip:
-            extra = "Sales conversion yako to revenue haiko efficient vile inafaa. Angalia inventory na expenses na kama promotions zako ziko poa. Inaweza kuwa hao indio kuna shida. Ukikosa kuifix unaweza endelea kulose do"
+            extra = "Your sales conversion to revenue is not efficient. I recommend running a revenue and sales weakness analysis with me to find why its inefficient and not enough. Otherwise, some factors will continue eating into your revenue even when you make a lot of sales. Kindly focus on streamlining the conversion."
         elif  "revenue is not solely driven by sales" not in line_strip:
-            extra = "sales conversion yako to revenue iko poa sai. Tuko sure ukiuza revenue inagrow directly so sai focus on increasing sales etc"
+            extra = "your sales conversion to revenue is incredibly efficient, to the extent that most of the time, your sales are directly influencing and driving revenue well. focus on scaling and increasing sales"
             
 
     performance_summary = f"{sales_perf} \n\n {revenue_perf}\n\n".strip()
@@ -70,6 +70,8 @@ def create_business_summary():
     )
 
     result = {
-        "narrative": narrative     
+        "narrative": narrative,
+        "wave_graph_data":wave_data
     }
+    
     return result
