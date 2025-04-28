@@ -150,10 +150,10 @@ def growth_report():
         summary += (
             f"• **{metric}**: trend {start:.1f} → {end:.1f} ({pct_chg:.1f}% change); "
             f"seasonal amplitude ±{season_amp:.1f} ({rel_season:.1f}% of level)\n\n"
-            f"    → **What this means:** the core {metric.lower()} baseline has "
+            f" **What this means:** the core {metric.lower()} baseline has "
             f"{'grown' if pct_chg>=0 else 'declined'} by {abs(pct_chg):.1f}% over the period, "
             f"while seasonal swings remain only ±{rel_season:.1f}% of that level.\n\n"
-            f"    → **Business takeaway:** focus planning on the underlying trend; seasonality is minor.\n\n"
+            f" **Business takeaway:** focus planning on the underlying trend; seasonality is minor.\n\n"
         )
 
     # 5.2 Growth Dynamics
@@ -163,27 +163,27 @@ def growth_report():
         weight = wmap[best] * 100
         summary += f"• **{metric}**: best model = **{best}** ({weight:.1f}% weight)\n\n"
         for name, w in wmap.items():
-            summary += f"    - {name:10s}: {w*100:5.1f}%\n"
+            summary += f"  {name:10s}: {w*100:5.1f}%\n"
         summary += "\n"
         if best == 'Exponential':
             summary += (
-                "    → **Interpretation:** consistent percentage growth at a steady rate.\n\n"
-                "    → **Takeaway:** maintain proportional investment to sustain momentum.\n\n"
+                " **Interpretation:** consistent percentage growth at a steady rate.\n\n"
+                " **Takeaway:** maintain proportional investment to sustain momentum.\n\n"
             )
         elif best == 'Logistic':
             summary += (
-                "    → **Interpretation:** S-curve growth nearing saturation.\n\n"
-                "    → **Takeaway:** explore new markets or products to extend growth.\n\n"
+                " **Interpretation:** S-curve growth nearing saturation.\n\n"
+                " **Takeaway:** explore new markets or products to extend growth.\n\n"
             )
         elif best == 'Power-Law':
             summary += (
-                "    → **Interpretation:** growth with decelerating pace.\n\n"
-                "    → **Takeaway:** front-load efforts early; later stages require targeted pushes.\n\n"
+                " **Interpretation:** growth with decelerating pace.\n\n"
+                " **Takeaway:** front-load efforts early; later stages require targeted pushes.\n\n"
             )
         else:  # Gompertz or Richards
             summary += (
-                "    → **Interpretation:** rapid mid-phase acceleration then plateau.\n\n"
-                "    → **Takeaway:** optimize efficiency and margins for mature growth phase.\n\n"
+                " **Interpretation:** rapid mid-phase acceleration then plateau.\n\n"
+                " **Takeaway:** optimize efficiency and margins for mature growth phase.\n\n"
             )
 
     # 5.3 Interactions & Leads/Lags
@@ -209,26 +209,27 @@ def growth_report():
         mu, sigma, vol = info['mu'], info['sigma'], info['vol_ewma']
         max_dd, recov  = info['max_dd'], info['recovery']
         summary += (
-            f"• **{metric}**: avg return {mu*100:.2f}%, σ {sigma*100:.2f}%, "
-            f"EWMA vol {vol*100:.2f}%\n"
+            f"### {metric} :\n\n"
+            f"- Avg return {mu*100:.2f}%, σ {sigma*100:.2f}%, "
+            f"EWMA vol {vol*100:.2f}%\n\n"
         )
-        summary += f"    - Max drawdown: {max_dd*100:.1f}%\n"
+        summary += f" - Max drawdown: {max_dd*100:.1f}%\n\n"
         summary += (
-            f"    - Recovery: {recov} periods\n"
-            if recov else "    - Recovery: (no full recovery yet)\n"
+            f" - Recovery: {recov} periods\n\n"
+            if recov else " - Recovery: (no full recovery yet)\n\n"
         )
-        summary += "    - VaR/ES at 5%:\n"
+        summary += " - VaR/ES at 5%:\n"
         for h, ve in info['var_es'].items():
             summary += (
-                f"       • {h:3d}-period: VaR = {ve['VaR']*100:.2f}%, "
-                f"ES = {ve['ES']*100:.2f}%\n"
+                f" • {h:3d}-period: VaR = {ve['VaR']*100:.2f}%, "
+                f"ES = {ve['ES']*100:.2f}%\n\n"
             )
         summary += (
-            f"\n    → **Interpretation:** the worst-case 5% drop is "
+            f"\n **Interpretation:** the worst-case 5% drop is "
             f"{info['var_es'][1]['VaR']*100:.1f}% next period and "
             f"{info['var_es'][FORECAST_HORIZON]['VaR']*100:.1f}% over "
             f"{FORECAST_HORIZON} periods.\n\n"
-            "    → **Takeaway:** ensure liquidity buffers cover these stress levels.\n\n"
+            " **Takeaway:** ensure liquidity buffers cover these stress levels.\n\n"
         )
 
     # 5.5 Forecast Outlook
@@ -244,13 +245,13 @@ def growth_report():
 
         summary += (
             f"• **{metric}**:\n"
-            f"    - Median: {p50[0]:.1f} → {p50[-1]:.1f} ({delta_med:+.1f}%)\n"
-            f"    - Conservative (10th): {p10[0]:.1f} → {p10[-1]:.1f} ({delta_low:+.1f}%)\n"
-            f"    - Optimistic (90th):  {p90[0]:.1f} → {p90[-1]:.1f} ({delta_hi:+.1f}%)\n"
-            f"\n    → **Interpretation:** median change of {delta_med:+.1f}% over "
+            f"  Median: {p50[0]:.1f} → {p50[-1]:.1f} ({delta_med:+.1f}%)\n\n"
+            f"  Conservative (10th): {p10[0]:.1f} → {p10[-1]:.1f} ({delta_low:+.1f}%)\n\n"
+            f"  Optimistic (90th):  {p90[0]:.1f} → {p90[-1]:.1f} ({delta_hi:+.1f}%)\n\n"
+            f"\n **Interpretation:** median change of {delta_med:+.1f}% over "
             f"{FORECAST_HORIZON} periods, with downside of {delta_low:+.1f}% "
             f"and upside of {delta_hi:+.1f}%.\n\n"
-            "    → **Takeaway:** base plans on the median path but prepare for the 10th percentile.\n\n"
+            " **Takeaway:** base plans on the median path but prepare for the 10th percentile.\n\n"
         )
 
     return summary
