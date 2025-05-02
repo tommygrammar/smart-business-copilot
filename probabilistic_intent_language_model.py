@@ -20,8 +20,9 @@ from Models.stockout import stockout
 from Models.sales_time import time_analysis
 from Models.demand_analysis import demand_analysis
 from Models.product_segmentation import type_shit
-from Models.growth import growth_report
+from Models.growth import generate_growth, generate_trend, generate_interactions, generate_forecast_outlook, generate_risk
 # Use combinations of distinct factors for analysis comparisons.
+from itertools import combinations
 from collections import defaultdict
 
 
@@ -328,7 +329,7 @@ class ProbabilisticLanguageModel:
                     resp = trend_generate_business_narrative(factor1, factor2, days)
                 elif function_name.startswith("impact_analysis"):
                     resp = impact_analysis()
-                elif function_name.startswith("risk_modeling"):
+                elif function_name.startswith("target_risk"):
                     resp = run_risk_analysis("revenue")
                 elif function_name.startswith("event_analysis"):
                     resp = calculate_event_probability("revenue", 651.4, 98, use_gbm=False, use_rolling_window=True, plot_residuals=False)
@@ -349,8 +350,15 @@ class ProbabilisticLanguageModel:
                 elif function_name.startswith("loss"):
                     resp = losses("revenue")
                 elif function_name.startswith("growth"):
-                    resp = growth_report()
-
+                    resp = generate_growth()
+                elif function_name.startswith("trend"):
+                    resp = generate_trend()
+                elif function_name.startswith("forecast"):
+                    resp = generate_forecast_outlook()
+                elif function_name.startswith("interacting"):
+                    resp = generate_interactions()
+                elif function_name.startswith("kpi_risk"):
+                    resp = generate_risk()
 
 
 

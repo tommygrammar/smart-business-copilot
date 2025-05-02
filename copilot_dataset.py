@@ -7,6 +7,13 @@ model.train("am i making losses", "invoke: loss")
 
 
 model.train("how is my growth", "invoke: growth")
+model.train("how is my trend", "invoke: trend")
+model.train("how is sales, revenue and efficiency interacting", "invoke: trend")
+model.train("how are the major kpis interacting", "invoke:interacting")
+model.train("give me the kpis current risk status", "invoke:kpi_risk")
+model.train("kpis risk", "invoke:kpi_risk")
+model.train("kpi risk", "invoke:kpi_risk")
+model.train("current forecasts status", "invoke: forecast")
 model.train("will i grow more", "invoke: growth")
 model.train("are my growth risks good", "invoke: growth")
 ##impact analysis
@@ -18,10 +25,10 @@ model.train("did the promotion work", "invoke: impact_analysis")
 model.train("competitor analysis", "invoke: competitor_analysis")
 
 ##risk-modeling analysis
-model.train("do a risk analysis", "invoke: risk_modeling")
-model.train("assess my risk", "invoke: risk_modeling")
-model.train("are my risks bad", "invoke: risk_modeling")
-model.train("how good is my risk", "invoke: risk_modeling")
+model.train("do a target risk analysis", "invoke: target_risk")
+model.train("assess my target risk", "invoke: target_risk")
+model.train("are my target risks bad", "invoke: target_risk")
+model.train("how good is my target risk", "invoke: target_risk")
 
 
 ##impact analysis
@@ -76,30 +83,6 @@ model.train("how can i keep my sales constant and optimize my marketing to reach
             "invoke: optimize")
 model.train("how can i optimize both my scales and marketing to reach <revenue>", 
             "invoke: optimize")
-
-# Additional variations
-model.train("tell me about marketing", "invoke: generate_marketing_summary")
-model.train("give me a marketing report", "invoke: generate_marketing_summary")
-model.train("how effective is our marketing", "invoke: generate_marketing_summary")
-model.train("marketing update", "invoke: generate_marketing_summary")
-model.train("explain marketing performance", "invoke: generate_marketing_summary")
-
-# Cost Efficiency Analysis Training Pairs
-model.train("analyze cost efficiency", "invoke: generate_cost_summary")
-model.train("analyze costs", "invoke: generate_cost_summary")
-model.train("analyze expenses", "invoke: generate_cost_summary")
-model.train("cost efficiency analysis", "invoke: generate_cost_summary")
-model.train("what are our cost trends", "invoke: generate_cost_summary")
-model.train("how efficient are our costs", "invoke: generate_cost_summary")
-model.train("analyze our expenses", "invoke: generate_cost_summary")
-model.train("what is the cost trend", "invoke: generate_cost_summary")
-
-# Additional variations
-model.train("give me a cost report", "invoke: generate_cost_summary")
-model.train("update me on our expenses", "invoke: generate_cost_summary")
-model.train("cost update", "invoke: generate_cost_summary")
-model.train("explain cost efficiency", "invoke: generate_cost_summary")
-model.train("tell me about our expenses", "invoke: generate_cost_summary")
 
 # Greetings
 model.train("Hi", "Hi Tom, how may i help you today?")
@@ -322,4 +305,3 @@ for factor1, factor2 in combinations(additional_factors, 2):
     model.train(f"how is {qf1} and {qf2} together", "invoke: analyze_drivers")
     model.train(f"how is {qf1} and {qf2}", "invoke: analyze_drivers")
     model.train(f"how is {qf1} and {qf2} doing", "invoke: analyze_drivers")
-

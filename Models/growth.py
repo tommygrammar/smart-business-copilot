@@ -6,136 +6,138 @@ from scipy.stats import norm, beta
 from statsmodels.tsa.seasonal import STL
 from statsmodels.tsa.api import VAR
 
-def growth_report():
-    # =============================================================================
-    #  PARAMETERS
-    # =============================================================================
-    FORECAST_HORIZON = 365      # periods ahead to forecast
-    N_MONTE_CARLO    = 10000    # Monte Carlo paths
-    RISK_ALPHA       = 0.05     # 5% tail for VaR/ES
-    SEASONAL_PERIOD  = 12       # e.g. 12 for monthly data
 
-    # =============================================================================
-    #  LOAD & PREPARE DATA
-    # =============================================================================
-    df = pd.DataFrame({
-        'Sales':             historical_data['sales'],
-        'Revenue':           historical_data['revenue'],
-        'Cost_Efficiency':   historical_data['cost_efficiency']
-    }, dtype=float)
+# =============================================================================
+#  PARAMETERS
+# =============================================================================
+FORECAST_HORIZON = 365      # periods ahead to forecast
+N_MONTE_CARLO    = 10000    # Monte Carlo paths
+RISK_ALPHA       = 0.05     # 5% tail for VaR/ES
+SEASONAL_PERIOD  = 12       # e.g. 12 for monthly data
 
-    n = len(df)
-    t = np.arange(n)
+# =============================================================================
+#  LOAD & PREPARE DATA
+# =============================================================================
+df = pd.DataFrame({
+    'Sales':             historical_data['sales'],
+    'Revenue':           historical_data['revenue'],
+    'Cost_Efficiency':   historical_data['cost_efficiency']
+}, dtype=float)
 
-    # =============================================================================
-    #  1. DECOMPOSE TREND & SEASONALITY
-    # =============================================================================
-    stl_results = {}
-    for col in df.columns:
-        stl = STL(df[col], period=SEASONAL_PERIOD, robust=True).fit()
-        stl_results[col] = stl
-        df[f'{col}_detrended'] = df[col] - stl.seasonal
+n = len(df)
+t = np.arange(n)
 
-    # =============================================================================
-    #  GROWTH MODEL FUNCTIONS
-    # =============================================================================
-    def exp_model(t, Q0, r):              return Q0 * np.exp(r * t)
-    def logistic_model(t, K, Q0, r):      return K / (1 + ((K-Q0)/Q0)*np.exp(-r*t))
-    def powerlaw_model(t, Q0, c, alpha):  return Q0 + c * t**alpha
-    def gompertz_model(t, A, B, C):       return A * np.exp(-B * np.exp(-C * t))
-    def richards_model(t, K, Q0, r, v):
-        return K / (1 + ((K/Q0)**v - 1)*np.exp(-r*v*t))**(1/v)
+# =============================================================================
+#  1. DECOMPOSE TREND & SEASONALITY
+# =============================================================================
+stl_results = {}
+for col in df.columns:
+    stl = STL(df[col], period=SEASONAL_PERIOD, robust=True).fit()
+    stl_results[col] = stl
+    df[f'{col}_detrended'] = df[col] - stl.seasonal
 
-    def simulate_gbm(S0, mu, sigma, H, N):
-        dt = 1.0
-        eps = np.random.randn(N, H)
-        increments = (mu - 0.5*sigma*sigma)*dt + sigma*np.sqrt(dt)*eps
-        log_paths = np.cumsum(np.hstack([np.zeros((N,1)), increments]), axis=1)
-        return S0 * np.exp(log_paths)
+# =============================================================================
+#  GROWTH MODEL FUNCTIONS
+# =============================================================================
+def exp_model(t, Q0, r):              return Q0 * np.exp(r * t)
+def logistic_model(t, K, Q0, r):      return K / (1 + ((K-Q0)/Q0)*np.exp(-r*t))
+def powerlaw_model(t, Q0, c, alpha):  return Q0 + c * t**alpha
+def gompertz_model(t, A, B, C):       return A * np.exp(-B * np.exp(-C * t))
+def richards_model(t, K, Q0, r, v):
+    return K / (1 + ((K/Q0)**v - 1)*np.exp(-r*v*t))**(1/v)
 
-    # =============================================================================
-    #  2. GLOBAL MODEL COMPARISON (BIC weights)
-    # =============================================================================
-    all_weights = {}
-    best_models = {}
+def simulate_gbm(S0, mu, sigma, H, N):
+    dt = 1.0
+    eps = np.random.randn(N, H)
+    increments = (mu - 0.5*sigma*sigma)*dt + sigma*np.sqrt(dt)*eps
+    log_paths = np.cumsum(np.hstack([np.zeros((N,1)), increments]), axis=1)
+    return S0 * np.exp(log_paths)
 
-    for metric in ['Sales','Revenue','Cost_Efficiency']:
-        y = df[f'{metric}_detrended'].values
-        bic_scores = {}
+# =============================================================================
+#  2. GLOBAL MODEL COMPARISON (BIC weights)
+# =============================================================================
+all_weights = {}
+best_models = {}
 
-        def fit_and_bic(fn, p0, bounds, k, name):
-            try:
-                popt, _ = curve_fit(fn, t, y, p0=p0, bounds=bounds, maxfev=20_000)
-                resid = y - fn(t, *popt)
-                sigma = np.sqrt(np.mean(resid**2))
-                ll    = norm.logpdf(y, loc=fn(t,*popt), scale=sigma).sum()
-                bic   = k * np.log(n) - 2*ll
-                bic_scores[name] = bic
-            except:
-                bic_scores[name] = np.inf
+for metric in ['Sales','Revenue','Cost_Efficiency']:
+    y = df[f'{metric}_detrended'].values
+    bic_scores = {}
 
-        fit_and_bic(exp_model,      [y[0], np.log(y[-1]/y[0])/(n-1)],
-                    ([-np.inf,-np.inf],[np.inf,np.inf]), 2, 'Exponential')
-        fit_and_bic(logistic_model, [y.max()*1.1, y[0], 0.1],
-                    ([0,0,0],[y.max()*10,y.max(),10]),      3, 'Logistic')
-        fit_and_bic(powerlaw_model, [y[0], (y[-1]-y[0])/(n-1),1.0],
-                    ([0,0,0],[np.inf,np.inf,10]),            3, 'Power-Law')
-        fit_and_bic(gompertz_model, [y.max(),1.0,0.1],
-                    ([0,0,0],[np.inf,np.inf,np.inf]),        3, 'Gompertz')
-        fit_and_bic(richards_model, [y.max(),y[0],0.1,1.0],
-                    ([0,0,0,0],[np.inf,np.inf,np.inf,10]),   4, 'Richards')
+    def fit_and_bic(fn, p0, bounds, k, name):
+        try:
+            popt, _ = curve_fit(fn, t, y, p0=p0, bounds=bounds, maxfev=20_000)
+            resid = y - fn(t, *popt)
+            sigma = np.sqrt(np.mean(resid**2))
+            ll    = norm.logpdf(y, loc=fn(t,*popt), scale=sigma).sum()
+            bic   = k * np.log(n) - 2*ll
+            bic_scores[name] = bic
+        except:
+            bic_scores[name] = np.inf
 
-        bics    = np.array(list(bic_scores.values()))
-        delta   = bics - np.nanmin(bics)
-        weights = np.exp(-0.5*delta) / np.nansum(np.exp(-0.5*delta))
-        names   = list(bic_scores.keys())
-        w_map   = dict(zip(names, weights))
+    fit_and_bic(exp_model,      [y[0], np.log(y[-1]/y[0])/(n-1)],
+                ([-np.inf,-np.inf],[np.inf,np.inf]), 2, 'Exponential')
+    fit_and_bic(logistic_model, [y.max()*1.1, y[0], 0.1],
+                ([0,0,0],[y.max()*10,y.max(),10]),      3, 'Logistic')
+    fit_and_bic(powerlaw_model, [y[0], (y[-1]-y[0])/(n-1),1.0],
+                ([0,0,0],[np.inf,np.inf,10]),            3, 'Power-Law')
+    fit_and_bic(gompertz_model, [y.max(),1.0,0.1],
+                ([0,0,0],[np.inf,np.inf,np.inf]),        3, 'Gompertz')
+    fit_and_bic(richards_model, [y.max(),y[0],0.1,1.0],
+                ([0,0,0,0],[np.inf,np.inf,np.inf,10]),   4, 'Richards')
 
-        all_weights[metric] = w_map
-        best_models[metric] = names[int(np.nanargmin(bics))]
+    bics    = np.array(list(bic_scores.values()))
+    delta   = bics - np.nanmin(bics)
+    weights = np.exp(-0.5*delta) / np.nansum(np.exp(-0.5*delta))
+    names   = list(bic_scores.keys())
+    w_map   = dict(zip(names, weights))
 
-    # =============================================================================
-    #  3. CROSS-METRIC DYNAMICS (VAR)
-    # =============================================================================
-    var_data = df[[f'{m}_detrended' for m in ['Sales','Revenue','Cost_Efficiency']]]
-    var_mod  = VAR(var_data)
-    lag_sel  = var_mod.select_order(12).aic
-    var_res  = var_mod.fit(lag_sel)
+    all_weights[metric] = w_map
+    best_models[metric] = names[int(np.nanargmin(bics))]
 
-    # =============================================================================
-    #  4. RISK & DOWNTURN ANALYSIS (EWMA Vol)
-    # =============================================================================
-    risk = {}
-    for metric in ['Sales','Revenue','Cost_Efficiency']:
-        s      = df[f'{metric}_detrended'].values
-        ret    = np.log(s[1:]/s[:-1])
-        mu, sigma = ret.mean(), ret.std(ddof=0)
-        vol_ewma   = pd.Series(ret).ewm(span=20, adjust=False).std().iloc[-1]
+# =============================================================================
+#  3. CROSS-METRIC DYNAMICS (VAR)
+# =============================================================================
+var_data = df[[f'{m}_detrended' for m in ['Sales','Revenue','Cost_Efficiency']]]
+var_mod  = VAR(var_data)
+lag_sel  = var_mod.select_order(12).aic
+var_res  = var_mod.fit(lag_sel)
 
-        cum    = s / s[0]
-        peak   = np.maximum.accumulate(cum)
-        dd     = (cum - peak) / peak
-        max_dd = dd.min()
-        trough = dd.argmin()
-        recov  = next((i for i in range(trough+1,len(cum)) if cum[i]>peak[trough]), None)
+# =============================================================================
+#  4. RISK & DOWNTURN ANALYSIS (EWMA Vol)
+# =============================================================================
+risk = {}
+for metric in ['Sales','Revenue','Cost_Efficiency']:
+    s      = df[f'{metric}_detrended'].values
+    ret    = np.log(s[1:]/s[:-1])
+    mu, sigma = ret.mean(), ret.std(ddof=0)
+    vol_ewma   = pd.Series(ret).ewm(span=20, adjust=False).std().iloc[-1]
 
-        var_es = {}
-        for h in [1,5,10,FORECAST_HORIZON]:
-            sim  = simulate_gbm(s[-1], mu, sigma, h, N_MONTE_CARLO)
-            r_h  = (sim[:,-1] - s[-1]) / s[-1]
-            v    = -np.quantile(r_h, RISK_ALPHA)
-            e    = -r_h[r_h <= np.quantile(r_h, RISK_ALPHA)].mean()
-            var_es[h] = {'VaR': v, 'ES': e}
+    cum    = s / s[0]
+    peak   = np.maximum.accumulate(cum)
+    dd     = (cum - peak) / peak
+    max_dd = dd.min()
+    trough = dd.argmin()
+    recov  = next((i for i in range(trough+1,len(cum)) if cum[i]>peak[trough]), None)
 
-        risk[metric] = {
-            'mu': mu, 'sigma': sigma, 'vol_ewma': vol_ewma,
-            'max_dd': max_dd, 'recovery': recov, 'var_es': var_es
-        }
+    var_es = {}
+    for h in [1,5,10,FORECAST_HORIZON]:
+        sim  = simulate_gbm(s[-1], mu, sigma, h, N_MONTE_CARLO)
+        r_h  = (sim[:,-1] - s[-1]) / s[-1]
+        v    = -np.quantile(r_h, RISK_ALPHA)
+        e    = -r_h[r_h <= np.quantile(r_h, RISK_ALPHA)].mean()
+        var_es[h] = {'VaR': v, 'ES': e}
 
-    # =============================================================================
-    #  5. OUTPUT — DYNAMIC BUSINESS NARRATIVE
-    # =============================================================================
+    risk[metric] = {
+        'mu': mu, 'sigma': sigma, 'vol_ewma': vol_ewma,
+        'max_dd': max_dd, 'recovery': recov, 'var_es': var_es
+    }
 
+
+# =============================================================================
+#  5. OUTPUT — DYNAMIC BUSINESS NARRATIVE
+# =============================================================================
+
+def generate_trend():
     # 5.1 Trend & Seasonality
     summary = (
         "## TREND & SEASONALITY\n\n"
@@ -155,9 +157,12 @@ def growth_report():
             f"while seasonal swings remain only ±{rel_season:.1f}% of that level.\n\n"
             f" **Business takeaway:** focus planning on the underlying trend; seasonality is minor.\n\n"
         )
+    return summary
+
+def generate_growth():
 
     # 5.2 Growth Dynamics
-    summary += "## GROWTH DYNAMICS\n\n"
+    summary = ( "## GROWTH DYNAMICS\n\n")
     for metric, wmap in all_weights.items():
         best   = best_models[metric]
         weight = wmap[best] * 100
@@ -185,9 +190,11 @@ def growth_report():
                 " **Interpretation:** rapid mid-phase acceleration then plateau.\n\n"
                 " **Takeaway:** optimize efficiency and margins for mature growth phase.\n\n"
             )
+    return summary
 
-    # 5.3 Interactions & Leads/Lags
-    summary += f"## INTERACTIONS & LEADS/LAGS (VAR, {lag_sel} lags)\n\n"
+# 5.3 Interactions & Leads/Lags
+def generate_interactions():
+    summary = (f"## INTERACTIONS & LEADS/LAGS (VAR, {lag_sel} lags)\n\n")
     var_coefs = var_res.coefs[0]
     labels    = ['Sales','Revenue','Cost_Efficiency']
     summary += "### Dynamic cross-effect summary:\n\n"
@@ -202,9 +209,11 @@ def growth_report():
             f"tends to {direction} {metric.lower()} by {abs(coef):.3f} today.\n"
         )
     summary += "\n"
+    return summary
 
-    # 5.4 Risk & Downturn
-    summary += "## RISK & DOWNTURN\n\n"
+# 5.4 Risk & Downturn
+def generate_risk():
+    summary = ("## RISK & DOWNTURN\n\n")
     for metric, info in risk.items():
         mu, sigma, vol = info['mu'], info['sigma'], info['vol_ewma']
         max_dd, recov  = info['max_dd'], info['recovery']
@@ -231,9 +240,11 @@ def growth_report():
             f"{FORECAST_HORIZON} periods.\n\n"
             " **Takeaway:** ensure liquidity buffers cover these stress levels.\n\n"
         )
+    return summary
 
-    # 5.5 Forecast Outlook
-    summary += f"## {FORECAST_HORIZON}-PERIOD FORECAST\n\n"
+# 5.5 Forecast Outlook
+def generate_forecast_outlook():
+    summary = (f"## {FORECAST_HORIZON}-PERIOD FORECAST\n\n")
     for metric in ['Sales','Revenue','Cost_Efficiency']:
         s0    = df[f'{metric}_detrended'].iloc[-1]
         mu, sigma = risk[metric]['mu'], risk[metric]['sigma']
@@ -253,5 +264,5 @@ def growth_report():
             f"and upside of {delta_hi:+.1f}%.\n\n"
             " **Takeaway:** base plans on the median path but prepare for the 10th percentile.\n\n"
         )
-
     return summary
+
