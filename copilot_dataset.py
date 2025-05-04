@@ -30,6 +30,8 @@ model.train("assess my target risk", "invoke: target_risk")
 model.train("are my target risks bad", "invoke: target_risk")
 model.train("how good is my target risk", "invoke: target_risk")
 
+model.train("sales forecast", "invoke: scast")
+
 
 ##impact analysis
 model.train("calculate an event probability", "invoke: event_analysis")

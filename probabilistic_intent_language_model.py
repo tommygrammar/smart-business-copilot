@@ -21,6 +21,7 @@ from Models.sales_time import time_analysis
 from Models.demand_analysis import demand_analysis
 from Models.product_segmentation import type_shit
 from Models.growth import generate_growth, generate_trend, generate_interactions, generate_forecast_outlook, generate_risk
+from Models.sales_forecast import forecast_sales
 # Use combinations of distinct factors for analysis comparisons.
 from itertools import combinations
 from collections import defaultdict
@@ -359,6 +360,8 @@ class ProbabilisticLanguageModel:
                     resp = generate_interactions()
                 elif function_name.startswith("kpi_risk"):
                     resp = generate_risk()
+                elif function_name.startswith("scast"):
+                    resp = forecast_sales()
 
 
 
