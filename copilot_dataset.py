@@ -31,6 +31,8 @@ model.train("are my target risks bad", "invoke: target_risk")
 model.train("how good is my target risk", "invoke: target_risk")
 
 model.train("sales forecast", "invoke: scast")
+model.train('who made you', "invoke: creator")
+model.train('what kind of technology do you use', "invoke: tech")
 
 
 ##impact analysis

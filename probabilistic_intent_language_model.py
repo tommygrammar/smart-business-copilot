@@ -2,6 +2,7 @@ import networkx as nx
 import re
 import math
 #Model Fuctions Imports
+from Models.Intro import creator, technology
 from Models.wave_driver_analysis import generate_business_narrative
 from Models.deep_wave_driver_analysis_period_support import trend_generate_business_narrative
 from Data.business_data import historical_data
@@ -362,7 +363,10 @@ class ProbabilisticLanguageModel:
                     resp = generate_risk()
                 elif function_name.startswith("scast"):
                     resp = forecast_sales()
-
+                elif function_name.startswith("creator"):
+                    resp = creator()
+                elif function_name.startswith("tech"):
+                    resp = technology()
 
 
 
