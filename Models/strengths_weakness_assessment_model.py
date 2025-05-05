@@ -363,7 +363,7 @@ def losses(outcome):
             f"The following are your areas of vulnerability which are making losses and not enough per $1000 investment\n\n"
             f" ### **Areas of Vulnerability:**\n\n"
             f"{weaknesses_str}\n\n"
-            f"### **Detailed Analysis:**\n"
+            
             
             
 

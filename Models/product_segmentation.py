@@ -114,14 +114,16 @@ def type_shit():
     strong_products = []
     mid_products = []
     weak_products = []
+    output_lines.append("--------------------------------------------------------------------------------\n")
 
     for prod in product_metrics:
         category = prod.get("category", "N/A")
-        output_lines.append(f"Product ID: {prod['product_id']} | Name: {prod['product_name']} | Category: {category}\n")
+
+        output_lines.append(f"- Product ID: {prod['product_id']} | Name: {prod['product_name']} | Category: {category}\n")
         output_lines.append(f"  Sales Velocity: {prod['sales_velocity']:.2f} units/day  |  Purchase Frequency: {prod['purchase_freq']:.2f} purchases/week\n")
         output_lines.append(f"  Customer Review (norm): {prod['customer_review']:.2f}  |  Margin: {prod['margin']:.2f}\n")
-        output_lines.append(f"  Composite Performance Score: {prod['performance_score']:.2f}  =>  Tier: {prod['tier']}\n")
-        output_lines.append("--------------------------------------------------------------------------------\n")
+        output_lines.append(f"  Composite Performance Score: {prod['performance_score']:.2f}  =>  Tier: {prod['tier']}\n\n\n")
+
         
         if prod["tier"] == "Strong":
             strong_products.append(prod["product_name"])

@@ -205,6 +205,12 @@ for factor in additional_factors:
                 "invoke: optimize")
     model.train(f"optimize {query_factor} , keep {query_factor} constant for a target revenue of <revenue>", 
                 "invoke: optimize")
+    # ——— Optimization Queries ———
+    model.train(f"how do i tweak {query_factor} and {query_factor} to reach <revenue>", "invoke: optimize")
+    model.train(f"optimize {query_factor} versus {query_factor} for <revenue>", "invoke: optimize")
+    model.train(f"what changes to {query_factor} and {query_factor} hit <revenue>", "invoke: optimize")
+    model.train(f"balance {query_factor} and {query_factor} to get <revenue>", "invoke: optimize")
+    model.train(f"achieve <revenue> by adjusting {query_factor} and {query_factor}", "invoke: optimize")
 
 # Generate multiple training pair variations for each additional factor.
 for factor in additional_factors:
@@ -226,6 +232,12 @@ for factor in additional_factors:
     model.train(f"forecast the effects of boosting {query_factor} by <rate>", "invoke: business_twin")
     model.train(f"simulate a future scenario where {query_factor} is raised by <rate>", "invoke: business_twin")
     model.train(f"how would increasing {query_factor} by <rate> affect my business", "invoke: business_twin")
+    # ——— Business Twin (Scenario Simulation) ———
+    model.train(f"what would happen if i increased {query_factor} by <rate>", "invoke: business_twin")
+    model.train(f"simulate boosting {query_factor} by <rate>", "invoke: business_twin")
+    model.train(f"project the effect of raising {query_factor} by <rate>", "invoke: business_twin")
+    model.train(f"if i augment {query_factor} by <rate>, what changes", "invoke: business_twin")
+    model.train(f"forecast impact of a <rate> boost in {query_factor}", "invoke: business_twin")
 
 for factor in additional_factors:
     query_factor = factor.replace("_", " ")
@@ -247,6 +259,12 @@ for factor in additional_factors:
     model.train(f"identify the weaknesses in my {query_factor}", f"invoke: find_weaknesses({factor})")
     model.train(f"where is my {query_factor} falling short", f"invoke: find_weaknesses({factor})")
     model.train(f"what are the weaknesses in {query_factor}", f"invoke: find_weaknesses({factor})")
+        # ——— Weakness Identification ———
+    model.train(f"why is my {query_factor} declining", f"invoke: find_weaknesses({factor})")
+    model.train(f"what is dragging {query_factor} down", f"invoke: find_weaknesses({factor})")
+    model.train(f"explain the drop in {query_factor}", f"invoke: find_weaknesses({factor})")
+    model.train(f"identify shortcomings in {query_factor}", f"invoke: find_weaknesses({factor})")
+    model.train(f"what factors are hindering {query_factor}", f"invoke: find_weaknesses({factor})")
     
     # --- Strength Training Pairs (Expanded) ---
     model.train(f"why is my {query_factor} strong", f"invoke: find_strengths({factor})")
@@ -265,6 +283,13 @@ for factor in additional_factors:
     model.train(f"where is my {query_factor} excelling", f"invoke: find_strengths({factor})")
     model.train(f"find the strengths in our {query_factor} performance", f"invoke: find_strengths({factor})")
     model.train(f"what improvements are seen in my {query_factor}", f"invoke: find_strengths({factor})")
+
+    # ——— Strength Identification ———
+    model.train(f"why is my {query_factor} strong", f"invoke: find_strengths({factor})")
+    model.train(f"what is boosting {query_factor}", f"invoke: find_strengths({factor})")
+    model.train(f"explain the rise in {query_factor}", f"invoke: find_strengths({factor})")
+    model.train(f"what factors enhance {query_factor}", f"invoke: find_strengths({factor})")
+    model.train(f"identify advantages of high {query_factor}", f"invoke: find_strengths({factor})")
 
 # Closing and courtesy pairs
 model.train("so good things are coming", "yes sir, based on our data, for the next 6 months, your business should perform significantly well")
@@ -309,3 +334,165 @@ for factor1, factor2 in combinations(additional_factors, 2):
     model.train(f"how is {qf1} and {qf2} together", "invoke: analyze_drivers")
     model.train(f"how is {qf1} and {qf2}", "invoke: analyze_drivers")
     model.train(f"how is {qf1} and {qf2} doing", "invoke: analyze_drivers")
+
+    # ——— Driver Analysis (Pairwise) ———
+    model.train(f"compare {qf1} and {qf2}", "invoke: analyze_drivers")
+    model.train(f"what is the relationship between {qf1} and {qf2}", "invoke: analyze_drivers")
+    model.train(f"explain correlation between c{qf1} and {qf2}", "invoke: analyze_drivers")
+    model.train(f"give me a report on {qf1} versus {qf2}", "invoke: analyze_drivers")
+    model.train(f"analyze interplay between {qf1} and {qf2}", "invoke: analyze_drivers")
+
+# ——— Loss Intent ———
+model.train("are my profits negative", "invoke: loss")
+model.train("am i losing money on operations", "invoke: loss")
+model.train("have i been incurring losses recently", "invoke: loss")
+model.train("is my business running at a loss", "invoke: loss")
+model.train("do i have any operational losses", "invoke: loss")
+
+# ——— Growth Intent ———
+model.train("what is my growth performance", "invoke: growth")
+model.train("am i on a growth trajectory", "invoke: growth")
+model.train("tell me about my growth rate", "invoke: growth")
+model.train("is my growth improving", "invoke: growth")
+model.train("how healthy is my growth", "invoke: growth")
+
+# ——— Trend Intent ———
+model.train("what's the current business trend", "invoke: trend")
+model.train("describe the trend of my KPIs", "invoke: trend")
+model.train("how has the trend shifted lately", "invoke: trend")
+model.train("what trend are we seeing now", "invoke: trend")
+model.train("how is our trend evolving", "invoke: trend")
+
+# ——— Interacting KPIs ———
+model.train("how do sales and revenue interact", "invoke: interacting")
+model.train("relationship between sales, revenue and efficiency", "invoke: interacting")
+model.train("explain KPI interactions", "invoke: interacting")
+model.train("how are my key metrics interrelated", "invoke: interacting")
+model.train("analyze interactions among my KPIs", "invoke: interacting")
+
+# ——— KPI Risk ———
+model.train("show me KPI risk levels", "invoke: kpi_risk")
+model.train("what is the current KPI risk status", "invoke: kpi_risk")
+model.train("evaluate my KPI risk", "invoke: kpi_risk")
+model.train("give me an overview of KPI risk", "invoke: kpi_risk")
+model.train("how risky are my KPIs right now", "invoke: kpi_risk")
+
+# ——— Forecast Status ———
+model.train("provide my current forecast status", "invoke: forecast")
+model.train("what are the latest forecasts", "invoke: forecast")
+model.train("show forecast overview", "invoke: forecast")
+model.train("give me the forecast report", "invoke: forecast")
+model.train("what is the status of upcoming forecasts", "invoke: forecast")
+
+# ——— Impact Analysis ———
+model.train("evaluate promotional impact", "invoke: impact_analysis")
+model.train("measure the effect of the promotion", "invoke: impact_analysis")
+model.train("analysis of promotion effectiveness", "invoke: impact_analysis")
+model.train("did the promotion boost sales", "invoke: impact_analysis")
+model.train("promotion impact summary", "invoke: impact_analysis")
+revenue
+# ——— Competitor Analysis ———
+model.train("conduct a competitor analysis", "invoke: competitor_analysis")
+model.train("compare our performance to competitors", "invoke: competitor_analysis")
+model.train("how do competitors stack up", "invoke: competitor_analysis")
+model.train("competitor performance report", "invoke: competitor_analysis")
+model.train("analyze competitor metrics", "invoke: competitor_analysis")
+
+# ——— Target Risk ———
+model.train("evaluate target risk", "invoke: target_risk")
+model.train("perform a target risk assessment", "invoke: target_risk")
+model.train("what is the risk to my targets", "invoke: target_risk")
+model.train("assess the risk of hitting targets", "invoke: target_risk")
+model.train("target risk report", "invoke: target_risk")
+
+# ——— Sales Forecast (scast) ———
+model.train("run a sales projection", "invoke: scast")
+model.train("forecast upcoming sales", "invoke: scast")
+model.train("predict next period’s sales", "invoke: scast")
+model.train("provide a sales forecast", "invoke: scast")
+model.train("what are expected sales", "invoke: scast")
+
+# ——— Creator Inquiry ———
+model.train("who created you", "invoke: creator")
+model.train("who built you", "invoke: creator")
+model.train("who is your developer", "invoke: creator")
+model.train("who wrote your code", "invoke: creator")
+model.train("what organization made you", "invoke: creator")
+
+# ——— Technology Stack ———
+model.train("what technology powers you", "invoke: tech")
+model.train("what tech stack do you use", "invoke: tech")
+model.train("which frameworks underpin you", "invoke: tech")
+model.train("what programming languages are you built with", "invoke: tech")
+model.train("what systems do you run on", "invoke: tech")
+
+# ——— Event Probability Analysis ———
+model.train("compute the event probability", "invoke: event_analysis")
+model.train("estimate the chance of the event", "invoke: event_analysis")
+model.train("what is the likelihood of success", "invoke: event_analysis")
+model.train("chance of meeting revenue target", "invoke: event_analysis")
+model.train("calculate the probability of my revenue goal", "invoke: event_analysis")
+
+# ——— Cashflow Analysis ———
+model.train("forecast my cashflow this week", "invoke: cashflow_analysis")
+model.train("predict weekly cash flow", "invoke: cashflow_analysis")
+model.train("will my cashflow be healthy this week", "invoke: cashflow_analysis")
+model.train("weekly cashflow projection", "invoke: cashflow_analysis")
+model.train("is my cash position stable for the week", "invoke: cashflow_analysis")
+
+# ——— Supply Chain Risk ———
+model.train("evaluate supply chain stability", "invoke: supply_chain")
+model.train("assess supply chain risk", "invoke: supply_chain")
+model.train("what is the probability of supply chain failure", "invoke: supply_chain")
+model.train("supply chain risk overview", "invoke: supply_chain")
+model.train("how vulnerable is my supply chain", "invoke: supply_chain")
+
+# ——— Stockout Probability ———
+model.train("compute stockout risk", "invoke: stockout")
+model.train("likelihood of running out of stock", "invoke: stockout")
+model.train("inventory depletion probability", "invoke: stockout")
+model.train("am i at risk of stockout", "invoke: stockout")
+model.train("stockout risk assessment", "invoke: stockout")
+
+# ——— Sales Timing ———
+model.train("identify peak sales times", "invoke: sales_time")
+model.train("when do i make the most sales", "invoke: sales_time")
+model.train("sales peak period analysis", "invoke: sales_time")
+model.train("when are sales highest", "invoke: sales_time")
+model.train("high-sales time identification", "invoke: sales_time")
+
+# ——— Demand Analysis ———
+model.train("what’s the demand forecast this week", "invoke: demand")
+model.train("predict weekly demand", "invoke: demand")
+model.train("weekly demand projection", "invoke: demand")
+model.train("what is our demand trend", "invoke: demand")
+model.train("estimate this week’s demand", "invoke: demand")
+
+# ——— Product Segmentation ———
+# — Strongest Products —
+model.train("list my top-performing products", "invoke: segment")
+model.train("which items sell best", "invoke: segment")
+model.train("best selling product report", "invoke: segment")
+model.train("strongest product segments", "invoke: segment")
+model.train("top products analysis", "invoke: segment")
+# — Weakest Products —
+model.train("list my bottom-selling products", "invoke: segment")
+model.train("which products are underperforming", "invoke: segment")
+model.train("weakest product analysis", "invoke: segment")
+model.train("products dragging performance down", "invoke: segment")
+model.train("identify my worst-selling items", "invoke: segment")
+
+# ——— Business Summary ———
+model.train("overview of business performance", "invoke: show_summary")
+model.train("performance summary report", "invoke: show_summary")
+model.train("company health snapshot", "invoke: show_summary")
+model.train("executive overview of my business", "invoke: show_summary")
+model.train("business metrics summary", "invoke: show_summary")
+
+
+# ——— Greetings & Closures ———
+model.train("hey", "Hi Tom, how may i help you today?")
+model.train("good afternoon", "Good Afternoon Tom, how may i help you today?")
+model.train("good evening", "Good Evening Tom, how may i help you today?")
+model.train("morning", "Good Morning Tom, how may i help you today?")
+model.train("thanks a lot", "You are welcome. Feel free to ask me anything else about your business.")

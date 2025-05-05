@@ -167,8 +167,8 @@ def generate_growth():
         best   = best_models[metric]
         weight = wmap[best] * 100
         summary += f"• **{metric}**: best model = **{best}** ({weight:.1f}% weight)\n\n"
-        for name, w in wmap.items():
-            summary += f"  {name:10s}: {w*100:5.1f}%\n"
+        #for name, w in wmap.items():
+        #    summary += f"  {name:10s}: {w*100:5.1f}%\n\n"
         summary += "\n"
         if best == 'Exponential':
             summary += (
