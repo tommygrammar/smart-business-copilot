@@ -390,7 +390,7 @@ model.train("measure the effect of the promotion", "invoke: impact_analysis")
 model.train("analysis of promotion effectiveness", "invoke: impact_analysis")
 model.train("did the promotion boost sales", "invoke: impact_analysis")
 model.train("promotion impact summary", "invoke: impact_analysis")
-revenue
+
 # ——— Competitor Analysis ———
 model.train("conduct a competitor analysis", "invoke: competitor_analysis")
 model.train("compare our performance to competitors", "invoke: competitor_analysis")
