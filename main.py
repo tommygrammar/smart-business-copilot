@@ -26,11 +26,8 @@ CORS(app)
 def query_endpoint():
     try:
         data = request.get_json()
-        rate = float(data['twinrate'])
-        factor = data['twinfactor']
-        print(data)
         
-        return business_twin(factor, rate ), 200
+        return business_twin(data['factor'], data['rate'] ), 200
     except Exception as e:
         return jsonify(), 400
 
@@ -249,4 +246,4 @@ def driver():
     except Exception as e:
         return jsonify(), 400 
 
-#app.run(debug = True, port=5000)
+app.run(debug = True, port=5000)

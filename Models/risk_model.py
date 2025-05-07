@@ -3,6 +3,7 @@ from collections import defaultdict
 from datetime import datetime
 from Models.corrective_assessment_support_for_risk_model import corrective  # Import the unified corrective function
 from Data.business_data import historical_data
+import json
 
 # --- 1. Improved Parameter Calibration Using Historical Data and Bayesian Update ---
 def calibrate_params(historical_data, kpi_names, factor, decay_rate=0.03):
@@ -95,7 +96,7 @@ def controlled_chaos_model(x, t, kpi, params, chaotic_inputs, prev_dx, x_eq, hea
     return dx
 
 # --- 4 & 6. run_risk_analysis Function with Robust State Handling and Business Integration ---
-def run_risk_analysis(factor):
+def run_risk_analysis(factor, target):
     """
     Executes a Monte Carlo simulation and risk analysis for the given KPI.
     Incorporates calibrated parameters, a controlled chaos simulation, and detailed diagnostics.
@@ -110,8 +111,8 @@ def run_risk_analysis(factor):
     
     # Set chaotic inputs to the historical data
     chaotic_inputs = {factor: data}
-    improve = 1.50  # Factor to calculate equilibrium target
-    x_eq = np.array([data[-1] * improve])
+      # Factor to calculate equilibrium target
+    x_eq = np.array([target])
     
     # Pre-calculate corrective recommendation (for recommended actions)
     rec = corrective(factor)
@@ -256,7 +257,7 @@ def run_risk_analysis(factor):
         "visual": risk_visualization,
         "diagnostics": health_log['diagnostic_log']
     }
-    return risk_data
+    return risk_data['narrative']
 
 # Example usage:
 #risk_report = run_risk_analysis("revenue")

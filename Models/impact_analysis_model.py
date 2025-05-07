@@ -2,7 +2,7 @@ import numpy as np
 #import matplotlib.pyplot as plt
 from scipy.stats import invgamma, t  # Used for inverse gamma sampling and t-distribution predictions
 
-def bayesian_impact():
+def promotional_impact():
     # -------------------------------
     # 1. Data Simulation (Synthetic Data)
     # -------------------------------

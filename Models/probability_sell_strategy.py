@@ -3,11 +3,12 @@ import pandas as pd
 from scipy.special import expit
 from datetime import datetime, timedelta
 
+
 def sell():
 
     def generate_synthetic_data(
         n_users=500,
-        n_days=500,
+        n_days=730,
         avg_sessions_per_user_per_day=0.1,
         trend_slope=0.0005,
         holiday_prob=0.02,

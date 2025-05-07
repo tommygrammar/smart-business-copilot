@@ -3,7 +3,7 @@ import numpy as np
 import math
 from datetime import datetime, timedelta
 from scipy.stats import beta
-def demand_analysis():
+def demand_analysis(n_days, product_stuff):
 
     # -------- Step 1: Generate Synthetic Historical Data --------
 
@@ -11,7 +11,7 @@ def demand_analysis():
 
     # Define simulation period: 120 days (~4 months)
     start_date = datetime(2025, 1, 1)
-    n_days = 120
+    
     dates = [start_date + timedelta(days=i) for i in range(n_days)]
 
     # Define 10 synthetic products representing a small business in Kenya.

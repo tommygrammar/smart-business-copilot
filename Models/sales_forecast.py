@@ -3,7 +3,7 @@ import pandas as pd
 from statsmodels.tsa.stattools import acf
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
 
-def forecast_sales():
+def forecast_sales(horizon):
     # 1. Generate synthetic daily sales for 5 years
     np.random.seed(42)
     days = 5 * 365
@@ -36,7 +36,7 @@ def forecast_sales():
     fit = model.fit(optimized=True)
 
     # 4. Forecast next year (365 days)
-    horizon = 365
+    
     forecast = fit.forecast(horizon)
     forecast_index = pd.date_range(start=data.index[-1] + pd.Timedelta(days=1), periods=horizon, freq='D')
     forecast = pd.Series(forecast.values, index=forecast_index, name='Forecast')

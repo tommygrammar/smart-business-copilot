@@ -2,7 +2,7 @@ import numpy as np
 from Data.business_data import historical_data
 
 
-def weekly_cashflow_sales_analysis():
+def weekly_cashflow_sales_analysis(unit_price, initial_cash, n_forecast_days  ):
     # -------------------------------
     # Step 1: Generate Synthetic Historical Data for Sales and Expenses
     # -------------------------------
@@ -18,10 +18,9 @@ def weekly_cashflow_sales_analysis():
     historical_expenses = historical_data['operational_costs']
 
     # Assume a fixed unit price for product sales, e.g., 100 currency units per sale.
-    unit_price = 5
 
     # Assume initial cash balance (e.g., starting working capital)
-    initial_cash = 0
+
 
     # Calibrate parameters from historical data:
     mean_sales = np.mean(historical_sales)
@@ -33,7 +32,7 @@ def weekly_cashflow_sales_analysis():
     # Step 2: Monte Carlo Simulation for Next Week's Sales and Cash Flow
     # -------------------------------
 
-    n_forecast_days = 7   # forecast period: one week
+
     n_simulations = 100000  # number of Monte Carlo paths
 
     # Arrays to hold simulation results

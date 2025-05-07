@@ -4,14 +4,13 @@ import math
 from scipy.stats import norm
 from Data.business_data import historical_data
 
-def stockout():
-
+def stockouts(simulation_days):
+    
     # -------------------------------
     # Simulation Parameters
     # -------------------------------
 
     n_simulations = 100000      # number of Monte Carlo paths
-    simulation_days =30        # simulation period (days)
     starting_inventory = historical_data['inventory'][-1]
 
     # Demand parameters (synthetic, representing a small business in Kenya)
