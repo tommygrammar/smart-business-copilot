@@ -1,67 +1,95 @@
 import numpy as np
 import pandas as pd
 from scipy.special import expit
-import statsmodels.api as sm
+from datetime import datetime, timedelta
+
 def sell():
-    # 1. Synthetic data generation with purchase‐history features
-    def generate_synthetic_data(n_users=1000, sessions_per_user=5,
-                                seasonal_amplitude=1.0, trend_slope=0.01, seed=42):
+
+    def generate_synthetic_data(
+        n_users=500,
+        n_days=500,
+        avg_sessions_per_user_per_day=0.1,
+        trend_slope=0.0005,
+        holiday_prob=0.02,
+        promo_prob=0.05,
+        seed=42
+    ):
         np.random.seed(seed)
         data = []
-        # ground‐truth coefficients
         true_beta = {
-            'intercept': -2.0,
-            'page_views': 0.3,
-            'time_on_page': 0.02,
-            'hour_sin': 0.5,
-            'hour_cos': -0.2,
-            'day_of_week': 0.1,
-            'purchase_rate': 1.5,
-            'cumulative_purchases': 0.1
+            'intercept': -3.0,
+            'page_views': 0.20,
+            'time_on_page': 0.015,
+            'day_of_week': 0.05,
+            'is_weekend': -0.20,
+            'holiday': 0.50,
+            'promotion': 0.40,
+            'peak_hour': 0.30,
+            'trend': 1.00,
+            'purchase_rate': 1.50,
+            'cumulative_purchases': 0.10
         }
-        user_history = {u: [] for u in range(n_users)}
-        for u in range(n_users):
-            for s in range(sessions_per_user):
-                pv = np.random.poisson(lam=5)
-                tp = np.random.exponential(scale=60)
-                h = np.random.randint(0, 24)
-                hs = np.sin(2 * np.pi * h / 24)
-                hc = np.cos(2 * np.pi * h / 24)
-                dw = np.random.randint(0, 7)
-                seasonal = seasonal_amplitude * np.sin(2 * np.pi * s / sessions_per_user)
-                trend = trend_slope * s
-                # history features
-                prev = sum(user_history[u])
-                rate = prev / s if s > 0 else 0.0
-                cum = prev
-                # linear predictor
-                lin = ( true_beta['intercept']
-                    + true_beta['page_views'] * pv
-                    + true_beta['time_on_page'] * tp
-                    + true_beta['hour_sin'] * hs
-                    + true_beta['hour_cos'] * hc
-                    + true_beta['day_of_week'] * dw
-                    + seasonal + trend
-                    + true_beta['purchase_rate'] * rate
-                    + true_beta['cumulative_purchases'] * cum )
-                p = expit(lin)
-                purchase = np.random.binomial(1, p)
-                user_history[u].append(purchase)
-                data.append({
-                    'page_views': pv,
-                    'time_on_page': tp,
-                    'hour_sin': hs,
-                    'hour_cos': hc,
-                    'day_of_week': dw,
-                    'seasonal': seasonal,
-                    'trend': trend,
-                    'purchase_rate': rate,
-                    'cumulative_purchases': cum,
-                    'purchase': purchase
-                })
+        user_history_count = {u: 0 for u in range(n_users)}
+        user_sessions     = {u: 0 for u in range(n_users)}
+        start_date = datetime.today() - timedelta(days=n_days)
+
+        for day_offset in range(n_days):
+            current_date = start_date + timedelta(days=day_offset)
+            dow        = current_date.weekday()                 # 0=Mon … 6=Sun
+            is_weekend = 1 if dow >= 5 else 0
+            holiday    = 1 if np.random.rand() < holiday_prob else 0
+            promotion  = 1 if np.random.rand() < promo_prob   else 0
+            trend      = trend_slope * day_offset
+
+            for u in range(n_users):
+                n_sess = np.random.poisson(lam=avg_sessions_per_user_per_day)
+                for _ in range(n_sess):
+                    user_sessions[u] += 1
+                    prev_purchases = user_history_count[u]
+                    purchase_rate  = prev_purchases / (user_sessions[u] - 1) if user_sessions[u] > 1 else 0.0
+                    cum_purchases  = prev_purchases
+
+                    pv   = np.random.poisson(lam=5)
+                    tp   = np.random.exponential(scale=60)
+                    hour = np.random.randint(0, 24)
+                    peak_hour = 1 if 18 <= hour < 22 else 0
+
+                    linear_part = (
+                        true_beta['intercept']
+                        + true_beta['page_views'] * pv
+                        + true_beta['time_on_page'] * tp
+                        + true_beta['day_of_week'] * dow
+                        + true_beta['is_weekend'] * is_weekend
+                        + true_beta['holiday'] * holiday
+                        + true_beta['promotion'] * promotion
+                        + true_beta['peak_hour'] * peak_hour
+                        + true_beta['trend'] * trend
+                        + true_beta['purchase_rate'] * purchase_rate
+                        + true_beta['cumulative_purchases'] * cum_purchases
+                    )
+
+                    p = expit(linear_part)
+                    purchase = np.random.binomial(1, p)
+                    user_history_count[u] += purchase
+
+                    data.append({
+                        'date': current_date,
+                        'user_id': u,
+                        'page_views': pv,
+                        'time_on_page': tp,
+                        'day_of_week': dow,
+                        'is_weekend': is_weekend,
+                        'holiday': holiday,
+                        'promotion': promotion,
+                        'peak_hour': peak_hour,
+                        'trend': trend,
+                        'purchase_rate': purchase_rate,
+                        'cumulative_purchases': cum_purchases,
+                        'purchase': purchase
+                    })
+
         return pd.DataFrame(data)
 
-    # 2. Bayesian logistic via Metropolis‐Hastings
     def bayesian_logistic_mh(X, y, n_samples=3000, burn_in=500,
                             proposal_scale=0.1, prior_sd=5.0, seed=42):
         np.random.seed(seed)
@@ -83,64 +111,70 @@ def sell():
                 samples.append(beta.copy())
         return np.array(samples)
 
-    # === Main ===
+    # === Main analysis ===
     data = generate_synthetic_data()
 
     features = [
-        'page_views','time_on_page','hour_sin','hour_cos',
-        'day_of_week','seasonal','trend',
-        'purchase_rate','cumulative_purchases'
+        'page_views',
+        'time_on_page',
+        'day_of_week',
+        'is_weekend',
+        'holiday',
+        'promotion',
+        'peak_hour',
+        'trend',
+        'purchase_rate',
+        'cumulative_purchases'
     ]
     X_df = data[features].copy()
-    X_df = sm.add_constant(X_df)
+    X_df.insert(0, 'const', 1.0)
+
     y = data['purchase'].values
     X = X_df.values
 
-    # Frequentist fit
-    freq_model = sm.Logit(y, X).fit(disp=False)
-    freq_params = freq_model.params
-
-    # Bayesian sampling
     samples = bayesian_logistic_mh(X, y)
+    lower_beta  = np.percentile(samples, 2.5, axis=0)
+    median_beta = np.percentile(samples, 50, axis=0)
+    upper_beta  = np.percentile(samples, 97.5, axis=0)
 
-    # 6. Coefficient credible intervals
-    lower_beta = np.percentile(samples, 2.5, axis=0)
-    upper_beta = np.percentile(samples, 97.5, axis=0)
-    odds_lower = np.exp(lower_beta)
-    odds_upper = np.exp(upper_beta)
-    pct_lower = (odds_lower - 1) * 100
-    pct_upper = (odds_upper - 1) * 100
+    odds_lower   = np.exp(lower_beta)
+    odds_median  = np.exp(median_beta)
+    odds_upper   = np.exp(upper_beta)
 
-    summary = []
+    pct_lower   = (odds_lower - 1) * 100
+    pct_median  = (odds_median - 1) * 100
+    pct_upper   = (odds_upper - 1) * 100
 
-    # 7. Print coefficient summary with uncertainty
-    summary = (f"# Selling Strategy: Coefficient Impacts with 95% Credible Intervals (Bayesian):\n\n")
-    for name, low, high in zip(X_df.columns, pct_lower, pct_upper):
-        if name == 'const': continue
-        summary += (f"- **{name.replace('_',' ').title()}**: {low:.1f}% to {high:.1f}% change in odds\n\n")
-
-
-    # 8. Predictive scenario with uncertainty
-    scenario = {
-        'page_views': 10, 'time_on_page': 120,
-        'hour_sin': np.sin(2*np.pi*15/24),
-        'hour_cos': np.cos(2*np.pi*15/24),
-        'day_of_week': 2, 'seasonal': np.sin(2*np.pi*1/5),
-        'trend': 0.02, 'purchase_rate': 0.3,
-        'cumulative_purchases': 3
+    impacts = {
+        name: pct_median[i]
+        for i, name in enumerate(X_df.columns) if name != 'const'
     }
-    # 9. Enhanced recommendation with probabilistic confidence
-    pct_freq = (np.exp(freq_params) - 1) * 100
-    impacts = dict(zip(X_df.columns, pct_freq))
-    impacts.pop('const', None)
-    sorted_feats = sorted(impacts.items(), key=lambda x: x[1], reverse=True)
-    boost, reduce = sorted_feats[0], sorted_feats[-1]
+    sorted_impacts = sorted(impacts.items(), key=lambda x: x[1], reverse=True)
+    top_factor, top_val       = sorted_impacts[0]
+    bottom_factor, bottom_val = sorted_impacts[-1]
 
-    summary += (f"\n ## Enhanced Actionable Insights:\n\n")
-    summary += (f"- Emphasize '{boost[0]}' – expected +{boost[1]:.1f}% on average, "
-        f"with high certainty based on observed data.\n\n")
-    summary += (f"- De‐emphasize '{reduce[0]}' – expected {reduce[1]:.1f}% drag, "
-        f"avoid to maintain conversion momentum.\n\n")
+    summary = "# Selling Strategy: Factor Impacts & Key Insights\n\n"
+    for i, name in enumerate(X_df.columns):
+        if name == 'const':
+            continue
+        label = name.replace('_', ' ').title()
+        avg   = pct_median[i]
+        low   = pct_lower[i]
+        high  = pct_upper[i]
+
+        summary += f"- **{label}**\n"
+        summary += f"  - *Typical Effect*: Each unit change in {label.lower()} moves purchase odds by about {avg:.1f}%.\n"
+        summary += f"  - *Range of Impact*: It can swing from {low:.1f}% to {high:.1f}% in practice.\n"
+
+        if name == top_factor:
+            summary += f"  - **What This Means**: Focusing on {label.lower()} delivers the biggest boost.\n\n"
+        elif name == bottom_factor:
+            summary += f"  - **What This Means**: {label} may slow things down—watch it closely.\n\n"
+        else:
+            summary += f"  - **What This Means**: Changes here yield moderate gains—consider after the top drivers.\n\n"
+
+    summary += "## Enhanced Actionable Insights:\n\n"
+    summary += f"- Put emphasis on **{top_factor.replace('_',' ').title()}** for an expected uplift of +{top_val:.1f}%.\n\n"
+    summary += f"- Keep an eye on **{bottom_factor.replace('_',' ').title()}**, as it may drag performance by {bottom_val:.1f}%.\n\n"
 
     return summary
-
