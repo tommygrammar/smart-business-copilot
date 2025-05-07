@@ -4,8 +4,7 @@ from itertools import combinations
 
 ##impact analysis
 model.train("am i making losses", "invoke: loss")
-
-
+model.train("how to sell well", "invoke: sell")
 model.train("how is my growth", "invoke: growth")
 model.train("how is my trend", "invoke: trend")
 model.train("how is sales, revenue and efficiency interacting", "invoke: trend")

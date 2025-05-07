@@ -28,3 +28,5 @@ def query_endpoint():
     else:
         # If model returned a string, wrap it in a dict
         return jsonify({'response': response_obj})
+    
+#app.run(debug = False, port=5000)

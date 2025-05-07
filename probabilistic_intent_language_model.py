@@ -23,6 +23,7 @@ from Models.demand_analysis import demand_analysis
 from Models.product_segmentation import type_shit
 from Models.growth import generate_growth, generate_trend, generate_interactions, generate_forecast_outlook, generate_risk
 from Models.sales_forecast import forecast_sales
+from Models.probability_sell_strategy import sell
 # Use combinations of distinct factors for analysis comparisons.
 from itertools import combinations
 from collections import defaultdict
@@ -367,6 +368,9 @@ class ProbabilisticLanguageModel:
                     resp = creator()
                 elif function_name.startswith("tech"):
                     resp = technology()
+                elif function_name.startswith("sell"):
+                    print("Triggering the sell model")
+                    resp = sell()
 
 
 
