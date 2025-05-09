@@ -81,7 +81,7 @@ def weekly_cashflow_sales_analysis(unit_price, initial_cash, n_forecast_days  ):
     # -------------------------------
 
     output_summary = (
-  f" ## Weekly Sales and Cash Flow Analysis:\n"
+  f" ## {n_forecast_days} days Cash Flow Analysis:\n"
     f"-------------------------------------------\n"
    f" Interpretation:\n"
     f"-------------\n"

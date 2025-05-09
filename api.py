@@ -109,10 +109,16 @@ def query_optimize():
 
 @app.route('/trend', methods = ['POST'])
 def query_trend():
+
     try:
-        data = request.get_json()
         
-        return generate_trend(), 200
+        data = request.get_json()
+        factor1 = data['trendFactor1']
+        factor2 = data['trendFactor2']
+        factor3 = data['trendFactor3']
+
+        
+        return generate_trend(factor1, factor2, factor3), 200
     except Exception as e:
         return jsonify(), 400 
 
@@ -120,8 +126,11 @@ def query_trend():
 def query_growth():
     try:
         data = request.get_json()
+        factor1 = data['growthFactor1']
+        factor2 = data['growthFactor2']
+        factor3 = data['growthFactor3']
         
-        return generate_growth(), 200
+        return generate_growth(factor1, factor2, factor3), 200
     except Exception as e:
         return jsonify(), 400 
     
@@ -129,8 +138,11 @@ def query_growth():
 def query_interactions():
     try:
         data = request.get_json()
+        factor1 = data['iFactor1']
+        factor2 = data['iFactor2']
+        factor3 = data['iFactor3']
         
-        return generate_interactions(), 200
+        return generate_interactions(factor1, factor2, factor3), 200
     except Exception as e:
         return jsonify(), 400 
     
@@ -138,8 +150,13 @@ def query_interactions():
 def query_kpirisk():
     try:
         data = request.get_json()
+        print(data)
+        forecast_horizon = data['rHorizon']
+        factor1 = data['rFactor1']
+        factor2 = data['rFactor2']
+        factor3 = data['rFactor3']
         
-        return generate_risk(), 200
+        return (generate_risk(forecast_horizon,factor1, factor2, factor3))[0], 200
     except Exception as e:
         return jsonify(), 400 
     
@@ -147,8 +164,13 @@ def query_kpirisk():
 def query_kpiforecast():
     try:
         data = request.get_json()
+        forecast_horizon = data['fHorizon']
+        factor1 = data['fFactor1']
+        factor2 = data['fFactor2']
+        factor3 = data['fFactor3']
         
-        return generate_forecast_outlook(), 200
+        
+        return generate_forecast_outlook(forecast_horizon,factor1, factor2, factor3), 200
     except Exception as e:
         return jsonify(), 400 
 
@@ -249,4 +271,4 @@ def driver():
     except Exception as e:
         return jsonify(), 400 
 
-#app.run(debug = True, port=5000)
+app.run(debug = True, port=5000)
