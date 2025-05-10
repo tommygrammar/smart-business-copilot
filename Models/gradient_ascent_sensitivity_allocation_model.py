@@ -123,6 +123,7 @@ def optimize(mode, target_revenue, fixed_m_change, fixed_s_change):
     final_reward = calculate_reward(final_revenue)
 
     result = (
+        " # Resource Allocation\n\n"
         "-----------------------------\n\n"
         "Our analysis has provided actionable insights to guide your business strategy based on your business dynamics.\n\n"
         "Key Insights:\n"

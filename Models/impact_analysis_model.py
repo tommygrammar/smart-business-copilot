@@ -195,7 +195,7 @@ def promotional_impact():
     # Create Narrative Impact Summary Object
     # -------------------------------
     narrative_impact_summary = (
-        "## Impact Analysis\n\n"
+        "# Promotion Analysis\n\n"
         "This report provides a detailed analysis of how a recent limited-time promotion influenced sales. The evaluation focuses on two key areas: the immediate boost in sales at the start of the promotion and the longer-term sales trajectory following the promotion period.\n\n"
         "### Immediate Boost\n"
         f"{conclusion_beta2}\n\n"

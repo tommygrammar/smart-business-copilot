@@ -117,7 +117,7 @@ def generate_growth(factor1, factor2, factor3):
         best_models[metric] = names[int(np.nanargmin(bics))]
 
     # 5.2 Growth Dynamics Narrative
-    summary = "## GROWTH DYNAMICS\n\n"
+    summary = "# GROWTH DYNAMICS\n\n"
     for metric, wmap in all_weights.items():
         best   = best_models[metric]
         weight = wmap[best] * 100
@@ -155,7 +155,7 @@ def generate_interactions(factor1, factor2, factor3):
     lag_sel  = var_mod.select_order(12).aic
     var_res  = var_mod.fit(lag_sel)
 
-    summary = (f"## INTERACTIONS & LEADS/LAGS (VAR, {lag_sel} lags)\n\n")
+    summary = (f"# INTERACTIONS & LEADS/LAGS (VAR, {lag_sel} lags)\n\n")
     var_coefs = var_res.coefs[0]
     labels    = [factor1, factor2, factor3]
     summary += "### Dynamic cross-effect summary:\n\n"
@@ -206,7 +206,7 @@ def generate_risk(FORECAST_HORIZON, factor1, factor2, factor3):
             'max_dd': max_dd, 'recovery': recov, 'var_es': var_es
         }
 
-    summary = ("## RISK & DOWNTURN\n\n")
+    summary = ("# RISK & DOWNTURN\n\n")
     for metric, info in risk.items():
         mu, sigma, vol = info['mu'], info['sigma'], info['vol_ewma']
         max_dd, recov  = info['max_dd'], info['recovery']
@@ -245,7 +245,7 @@ def generate_trend(factor1, factor2, factor3):
     n = len(df)
     t = np.arange(n)
     stl_results = decompose_trend_seasonality(factor1, factor2, factor3)
-    summary = "## TREND & SEASONALITY\n\n"
+    summary = "# TREND & SEASONALITY\n\n"
     for metric in [factor1, factor2, factor3]:
         stl        = stl_results[metric]
         start, end = stl.trend.iloc[0], stl.trend.iloc[-1]
@@ -267,7 +267,7 @@ def generate_trend(factor1, factor2, factor3):
 def generate_forecast_outlook(FORECAST_HORIZON, factor1, factor2, factor3):
     df = load_data(factor1, factor2, factor3)
     df, _ = detrend_data(df)
-    summary = (f"## {FORECAST_HORIZON}-PERIOD FORECAST\n\n")
+    summary = (f"# {FORECAST_HORIZON}-PERIOD FORECAST\n\n")
     for metric in [factor1, factor2, factor3]:
         s0    = df[f'{metric}_detrended'].iloc[-1]
         s     = generate_risk(FORECAST_HORIZON, factor1, factor2, factor3)
