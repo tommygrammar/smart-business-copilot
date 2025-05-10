@@ -27,7 +27,7 @@ def query_endpoint():
     try:
         data = request.get_json()
         rate = float(data['twinrate'])
-        factor = data['twinfactor']
+        factor = data['twinfactor'].replace(' ', '')
         print(data)
         
         return business_twin(factor, rate ), 200
@@ -59,8 +59,8 @@ def query_comptetitor():
 def query_deepwave():
     try:
         data = request.get_json()
-        factor1=data['factor1']
-        factor2=data['factor2']
+        factor1=data['factor1'].replace(' ', '')
+        factor2=data['factor2'].replace(' ', '')
         period_length = data['period_length']
         
         return trend_generate_business_narrative(factor1, factor2, period_length), 200
@@ -73,7 +73,7 @@ def query_demand():
     try:
         data = request.get_json()
         days = data['n_days']
-        product = data['product']
+        product = data['product'].replace(' ', '')
 
         
         return demand_analysis(days, product), 200
@@ -84,7 +84,7 @@ def query_demand():
 def query_eventprobability():
     try:
         data = request.get_json()
-        factor = data['factor']
+        factor = data['factor'].replace(' ', '')
         target = data['target']
         period = data['period']
 
@@ -97,7 +97,7 @@ def query_eventprobability():
 def query_optimize():
     try:
         data = request.get_json()
-        mode = data['mode']
+        mode = data['mode'].replace(' ', '')
         target_revenue = data['target_revenue']
         s_change = data['s_change']
         m_change = data['m_change']
@@ -113,12 +113,8 @@ def query_trend():
     try:
         
         data = request.get_json()
-        factor1 = data['trendFactor1']
-        factor2 = data['trendFactor2']
-        factor3 = data['trendFactor3']
-
-        
-        return generate_trend(factor1, factor2, factor3), 200
+        factor1 = data['trendFactor1'].replace(' ', '')        
+        return generate_trend(factor1), 200
     except Exception as e:
         return jsonify(), 400 
 
@@ -126,11 +122,8 @@ def query_trend():
 def query_growth():
     try:
         data = request.get_json()
-        factor1 = data['growthFactor1']
-        factor2 = data['growthFactor2']
-        factor3 = data['growthFactor3']
-        
-        return generate_growth(factor1, factor2, factor3), 200
+        factor1 = data['growthFactor1'].replace(' ', '')
+        return generate_growth(factor1), 200
     except Exception as e:
         return jsonify(), 400 
     
@@ -138,11 +131,11 @@ def query_growth():
 def query_interactions():
     try:
         data = request.get_json()
-        factor1 = data['iFactor1']
-        factor2 = data['iFactor2']
-        factor3 = data['iFactor3']
+        factor1 = data['iFactor1'].replace(' ', '')
+        factor2 = data['iFactor2'].replace(' ', '')
         
-        return generate_interactions(factor1, factor2, factor3), 200
+        
+        return generate_interactions(factor1, factor2), 200
     except Exception as e:
         return jsonify(), 400 
     
@@ -152,11 +145,9 @@ def query_kpirisk():
         data = request.get_json()
         print(data)
         forecast_horizon = data['rHorizon']
-        factor1 = data['rFactor1']
-        factor2 = data['rFactor2']
-        factor3 = data['rFactor3']
+        factor1 = data['rFactor1'].replace(' ', '')
         
-        return (generate_risk(forecast_horizon,factor1, factor2, factor3))[0], 200
+        return (generate_risk(forecast_horizon,factor1))[0], 200
     except Exception as e:
         return jsonify(), 400 
     
@@ -165,12 +156,9 @@ def query_kpiforecast():
     try:
         data = request.get_json()
         forecast_horizon = data['fHorizon']
-        factor1 = data['fFactor1']
-        factor2 = data['fFactor2']
-        factor3 = data['fFactor3']
+        factor1 = data['fFactor1'].replace(' ', '')
         
-        
-        return generate_forecast_outlook(forecast_horizon,factor1, factor2, factor3), 200
+        return generate_forecast_outlook(forecast_horizon,factor1), 200
     except Exception as e:
         return jsonify(), 400 
 
@@ -215,7 +203,7 @@ def productsegmentation():
 def targetrisk():
     try:
         data = request.get_json()
-        factor = data['factor']
+        factor = data['factor'].replace(' ', '')
         target = data['target']
         
         return run_risk_analysis(factor, target), 200
@@ -247,8 +235,8 @@ def stockout():
 def assess():
     try:
         data = request.get_json()
-        mode = data['mode']
-        factor = data['factor']
+        mode = data['mode'].replace(' ', '')
+        factor = data['factor'].replace(' ', '')
 
         if mode == 'strength':
             return find_strengths(factor), 200
@@ -264,11 +252,11 @@ def assess():
 def driver():
     try:
         data = request.get_json()
-        factor1 = data['factor1']
-        factor2 = data['factor2']
+        factor1 = data['factor1'].replace(' ', '')
+        factor2 = data['factor2'].replace(' ', '')
         
         return generate_business_narrative(factor1, factor2), 200
     except Exception as e:
         return jsonify(), 400 
 
-#app.run(debug = True, port=5000)
+app.run(debug = True, port=5000)

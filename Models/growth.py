@@ -17,11 +17,16 @@ SEASONAL_PERIOD  = 12       # e.g. 12 for monthly data
 # =============================================================================
 #  LOAD & PREPARE DATA
 # =============================================================================
-def load_data(factor1, factor2, factor3):
+def load_data(factor1):
+    df = pd.DataFrame({
+        factor1:             historical_data[factor1]
+    }, dtype=float)
+    return df
+
+def load_data_interact(factor1, factor2):
     df = pd.DataFrame({
         factor1:             historical_data[factor1],
-        factor2:           historical_data[factor2],
-        factor3:   historical_data[factor3]
+        factor2:             historical_data[factor2]
     }, dtype=float)
     return df
 
@@ -44,8 +49,8 @@ def detrend_data(df):
 # =============================================================================
 #  1. DECOMPOSE TREND & SEASONALITY
 # =============================================================================
-def decompose_trend_seasonality(factor1, factor2, factor3):
-    df = load_data(factor1, factor2, factor3)
+def decompose_trend_seasonality(factor1):
+    df = load_data(factor1)
     _, stl_results = detrend_data(df)
     
     # (optional) print each detrended series for inspection
@@ -63,8 +68,8 @@ def simulate_gbm(S0, mu, sigma, H, N):
     log_paths = np.cumsum(np.hstack([np.zeros((N,1)), increments]), axis=1)
     return S0 * np.exp(log_paths)
 
-def generate_growth(factor1, factor2, factor3):
-    df = load_data(factor1, factor2, factor3)
+def generate_growth(factor1):
+    df = load_data(factor1)
     df, _ = detrend_data(df)
     n = len(df)
     t = np.arange(n)
@@ -81,7 +86,7 @@ def generate_growth(factor1, factor2, factor3):
     all_weights = {}
     best_models = {}
 
-    for metric in [factor1, factor2, factor3]:
+    for metric in [factor1]:
         y = df[f'{metric}_detrended'].values
         bic_scores = {}
 
@@ -147,17 +152,19 @@ def generate_growth(factor1, factor2, factor3):
 # =============================================================================
 #  3. CROSS-METRIC DYNAMICS (VAR)
 # =============================================================================
-def generate_interactions(factor1, factor2, factor3):
-    df = load_data(factor1, factor2, factor3)
+def generate_interactions(factor1, factor2):
+    
+    
+    df = load_data_interact(factor1, factor2)
     df, _ = detrend_data(df)
-    var_data = df[[f'{m}_detrended' for m in [factor1, factor2, factor3]]]
+    var_data = df[[f'{m}_detrended' for m in [factor1, factor2]]]
     var_mod  = VAR(var_data)
     lag_sel  = var_mod.select_order(12).aic
     var_res  = var_mod.fit(lag_sel)
 
     summary = (f"# INTERACTIONS & LEADS/LAGS (VAR, {lag_sel} lags)\n\n")
     var_coefs = var_res.coefs[0]
-    labels    = [factor1, factor2, factor3]
+    labels    = [factor1, factor2]
     summary += "### Dynamic cross-effect summary:\n\n"
     for i, metric in enumerate(labels):
         cross = [(j, var_coefs[i, j]) for j in range(len(labels)) if j != i]
@@ -175,12 +182,12 @@ def generate_interactions(factor1, factor2, factor3):
 # =============================================================================
 #  4. RISK & DOWNTURN ANALYSIS (EWMA Vol)
 # =============================================================================
-def generate_risk(FORECAST_HORIZON, factor1, factor2, factor3):
-    df = load_data(factor1, factor2, factor3)
+def generate_risk(FORECAST_HORIZON, factor1):
+    df = load_data(factor1)
     df, _ = detrend_data(df)
     
     risk = {}
-    for metric in [factor1, factor2, factor3]:
+    for metric in [factor1]:
         s      = df[f'{metric}_detrended'].values
         ret    = np.log(s[1:]/s[:-1])
         mu, sigma = ret.mean(), ret.std(ddof=0)
@@ -206,7 +213,7 @@ def generate_risk(FORECAST_HORIZON, factor1, factor2, factor3):
             'max_dd': max_dd, 'recovery': recov, 'var_es': var_es
         }
 
-    summary = ("# RISK & DOWNTURN\n\n")
+    summary = "# RISK & DOWNTURN\n\n"
     for metric, info in risk.items():
         mu, sigma, vol = info['mu'], info['sigma'], info['vol_ewma']
         max_dd, recov  = info['max_dd'], info['recovery']
@@ -240,13 +247,13 @@ def generate_risk(FORECAST_HORIZON, factor1, factor2, factor3):
 # =============================================================================
 #  5. OUTPUT — DYNAMIC BUSINESS NARRATIVE
 # =============================================================================
-def generate_trend(factor1, factor2, factor3):
-    df = load_data(factor1, factor2, factor3)
+def generate_trend(factor1):
+    df = load_data(factor1)
     n = len(df)
     t = np.arange(n)
-    stl_results = decompose_trend_seasonality(factor1, factor2, factor3)
+    stl_results = decompose_trend_seasonality(factor1)
     summary = "# TREND & SEASONALITY\n\n"
-    for metric in [factor1, factor2, factor3]:
+    for metric in [factor1]:
         stl        = stl_results[metric]
         start, end = stl.trend.iloc[0], stl.trend.iloc[-1]
         season_amp = stl.seasonal.std()
@@ -264,13 +271,13 @@ def generate_trend(factor1, factor2, factor3):
     return summary
 
 # 5.5 Forecast Outlook (untouched; will now find detrended series in generate_risk)
-def generate_forecast_outlook(FORECAST_HORIZON, factor1, factor2, factor3):
-    df = load_data(factor1, factor2, factor3)
+def generate_forecast_outlook(FORECAST_HORIZON, factor1):
+    df = load_data(factor1)
     df, _ = detrend_data(df)
     summary = (f"# {FORECAST_HORIZON}-PERIOD FORECAST\n\n")
-    for metric in [factor1, factor2, factor3]:
+    for metric in [factor1]:
         s0    = df[f'{metric}_detrended'].iloc[-1]
-        s     = generate_risk(FORECAST_HORIZON, factor1, factor2, factor3)
+        s     = generate_risk(FORECAST_HORIZON, factor1)
         mu, si= s[1], s[2]
         sim   = simulate_gbm(s0, mu, si, FORECAST_HORIZON, N_MONTE_CARLO)
         p10, p50, p90 = np.percentile(sim, [10,50,90], axis=0)
@@ -293,6 +300,8 @@ def generate_forecast_outlook(FORECAST_HORIZON, factor1, factor2, factor3):
 # =============================================================================
 #  RUN EXAMPLES
 # =============================================================================
+
+#print(generate_interactions('revenue','sales'))
 #print(generate_growth('sales', 'revenue', 'cost_efficiency'))
 
 #print(generate_forecast_outlook(200, 'sales', 'revenue', 'marketing'))
