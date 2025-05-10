@@ -21,19 +21,18 @@ from Models.wave_driver_analysis import generate_business_narrative
 
 app = Flask(__name__)
 CORS(app)
-
+#runs business twin simulations
 @app.route('/twin', methods = ['POST'])
 def query_endpoint():
     try:
         data = request.get_json()
         rate = float(data['twinrate'])
-        factor = data['twinfactor'].replace(' ', '')
-        print(data)
-        
+        factor = data['twinfactor'].replace(' ', '')        
         return business_twin(factor, rate ), 200
     except Exception as e:
         return jsonify(), 400
 
+#runs cashflow probabilities
 @app.route('/cashflowsales', methods = ['POST'])
 def query_cashflow():
     try:
@@ -45,7 +44,8 @@ def query_cashflow():
         return weekly_cashflow_sales_analysis(unit_price, initial_cash, forecast_days), 200
     except Exception as e:
         return jsonify(), 400
-    
+
+#runs competitor impact analysis
 @app.route('/competitorimpact', methods = ['POST'])
 def query_comptetitor():
     try:
@@ -54,7 +54,8 @@ def query_comptetitor():
         return bayesian_competitor_analysis(), 200
     except Exception as e:
         return jsonify(), 400
-    
+
+ #runs periodic deep wave analysis   
 @app.route('/deepwave', methods = ['POST'])
 def query_deepwave():
     try:
@@ -67,7 +68,7 @@ def query_deepwave():
     except Exception as e:
         return jsonify(), 400
     
-
+#runs demand analysis
 @app.route('/demand', methods = ['POST'])
 def query_demand():
     try:
@@ -79,7 +80,8 @@ def query_demand():
         return demand_analysis(days, product), 200
     except Exception as e:
         return jsonify(), 400
-    
+
+ #runs event probabilities   
 @app.route('/eventprobability', methods = ['POST'])
 def query_eventprobability():
     try:
@@ -92,7 +94,7 @@ def query_eventprobability():
         return (calculate_event_probability(factor, target, period, use_gbm=False, use_rolling_window=True, plot_residuals=False)), 200
     except Exception as e:
         return jsonify(), 400
-
+#resource allocation optimizations
 @app.route('/optimize', methods = ['POST'])
 def query_optimize():
     try:
@@ -107,6 +109,7 @@ def query_optimize():
     except Exception as e:
         return jsonify(), 400  
 
+#trend analytics
 @app.route('/trend', methods = ['POST'])
 def query_trend():
 
@@ -118,6 +121,7 @@ def query_trend():
     except Exception as e:
         return jsonify(), 400 
 
+#growth analytics
 @app.route('/growth', methods = ['POST'])
 def query_growth():
     try:
@@ -126,7 +130,7 @@ def query_growth():
         return generate_growth(factor1), 200
     except Exception as e:
         return jsonify(), 400 
-    
+#kpi interactions
 @app.route('/kpiinteractions', methods = ['POST'])
 def query_interactions():
     try:
@@ -138,19 +142,17 @@ def query_interactions():
         return generate_interactions(factor1, factor2), 200
     except Exception as e:
         return jsonify(), 400 
-    
+#periodic kpi risks  
 @app.route('/kpirisk', methods = ['POST'])
 def query_kpirisk():
     try:
         data = request.get_json()
-        print(data)
         forecast_horizon = data['rHorizon']
-        factor1 = data['rFactor1'].replace(' ', '')
-        
+        factor1 = data['rFactor1'].replace(' ', '')        
         return (generate_risk(forecast_horizon,factor1))[0], 200
     except Exception as e:
         return jsonify(), 400 
-    
+#periodic kpi forecasts
 @app.route('/kpiforecast', methods = ['POST'])
 def query_kpiforecast():
     try:
@@ -162,6 +164,7 @@ def query_kpiforecast():
     except Exception as e:
         return jsonify(), 400 
 
+#promotional impact analysis
 @app.route('/promotionalimpact', methods = ['POST'])
 def promotionalimpact():
     try:
@@ -171,6 +174,7 @@ def promotionalimpact():
     except Exception as e:
         return jsonify(), 400 
 
+#business summary
 @app.route('/summary', methods = ['POST'])
 def summary():
     try:
@@ -180,6 +184,7 @@ def summary():
     except Exception as e:
         return jsonify(), 400 
 
+#selling model
 @app.route('/sellingpointers', methods = ['POST'])
 def sellpointers():
     try:
@@ -189,7 +194,7 @@ def sellpointers():
     except Exception as e:
         return jsonify(), 400 
     
-
+#products segmentations
 @app.route('/productsegmentation', methods = ['POST'])
 def productsegmentation():
     try:
@@ -198,7 +203,7 @@ def productsegmentation():
         return type_shit(), 200
     except Exception as e:
         return jsonify(), 400 
-
+#
 @app.route('/targetrisk', methods = ['POST'])
 def targetrisk():
     try:
@@ -259,4 +264,4 @@ def driver():
     except Exception as e:
         return jsonify(), 400 
 
-#app.run(debug = True, port=5000)
+app.run(debug = True, port=5000)
