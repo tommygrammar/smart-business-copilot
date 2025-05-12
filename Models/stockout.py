@@ -11,7 +11,7 @@ def stockouts(simulation_days):
     # -------------------------------
 
     n_simulations = 100000      # number of Monte Carlo paths
-    starting_inventory = historical_data['inventory'][-1] *10
+    starting_inventory = historical_data['inventory'][-1]
 
     # Demand parameters (synthetic, representing a small business in Kenya)
     mean_daily_demand = np.mean(historical_data['sales'])
