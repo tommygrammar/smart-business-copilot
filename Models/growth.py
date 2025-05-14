@@ -41,7 +41,7 @@ def detrend_data(df):
         stl = STL(df[col], period=SEASONAL_PERIOD, robust=True).fit()
         stl_results[col] = stl
         df[f'{col}_detrended'] = df[col] - stl.seasonal
-    s0    = df[f'sales_detrended'].iloc[-1]
+    
     
     
     return df, stl_results

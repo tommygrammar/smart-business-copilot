@@ -114,8 +114,7 @@ def query_optimize():
 @app.route('/trend', methods = ['POST'])
 def query_trend():
 
-    try:
-        
+    try:        
         data = request.get_json()
         factor1 = data['trendFactor1'].replace(' ', '')        
         return generate_trend(factor1), 200
@@ -135,7 +134,7 @@ def query_growth():
 @app.route('/kpiinteractions', methods = ['POST'])
 def query_interactions():
     try:
-        data = request.get_json()
+        data = request.get_json()          
         factor1 = data['iFactor1'].replace(' ', '')
         factor2 = data['iFactor2'].replace(' ', '')
         
@@ -146,10 +145,14 @@ def query_interactions():
 #periodic kpi risks  
 @app.route('/kpirisk', methods = ['POST'])
 def query_kpirisk():
+
+    
     try:
-        data = request.get_json()
-        forecast_horizon = data['rHorizon']
-        factor1 = data['rFactor1'].replace(' ', '')        
+        data = request.get_json()  
+        
+              
+        forecast_horizon = data['target']
+        factor1 = data['factor'].replace(' ', '')        
         return (generate_risk(forecast_horizon,factor1))[0], 200
     except Exception as e:
         return jsonify(), 400 
@@ -158,8 +161,8 @@ def query_kpirisk():
 def query_kpiforecast():
     try:
         data = request.get_json()
-        forecast_horizon = data['fHorizon']
-        factor1 = data['fFactor1'].replace(' ', '')
+        forecast_horizon = data['horizon']
+        factor1 = data['factor'].replace(' ', '')
         
         return generate_forecast_outlook(forecast_horizon,factor1), 200
     except Exception as e:
@@ -276,4 +279,4 @@ def spointers():
         return jsonify({ 'error': str(e) }), 400
 
 
-#app.run(debug = True, port=5000)
+app.run(debug = True, port=5000)
