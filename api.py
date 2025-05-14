@@ -17,6 +17,7 @@ from Models.sales_forecast import forecast_sales
 from Models.stockout import stockouts
 from Models.strengths_weakness_assessment_model import find_strengths, find_weaknesses, losses
 from Models.wave_driver_analysis import generate_business_narrative
+from Models.sprob import spoint
 
 
 app = Flask(__name__)
@@ -263,5 +264,16 @@ def driver():
         return generate_business_narrative(factor1, factor2), 200
     except Exception as e:
         return jsonify(), 400 
+    
+#runs business twin simulations
+@app.route('/spointers', methods=['POST'])
+def spointers():
+    try:
+        payload = request.get_json(silent=True) or {}
+        result = spoint()        # <-- now returns a dict
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({ 'error': str(e) }), 400
 
-#app.run(debug = True, port=5000)
+
+app.run(debug = True, port=5000)
