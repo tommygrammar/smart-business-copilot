@@ -3,6 +3,7 @@ flask_cors
 numpy
 scipy
 pandas
+openpyxl
 statsmodels
 networkx
 gunicorn
