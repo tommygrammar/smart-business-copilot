@@ -18,6 +18,8 @@ from Models.stockout import stockouts
 from Models.strengths_weakness_assessment_model import find_strengths, find_weaknesses, losses
 from Models.wave_driver_analysis import generate_business_narrative
 from Models.sprob import spoint
+from Models.AnomalyDetection import AnomalyDetector
+import pandas as pd
 
 
 app = Flask(__name__)
@@ -277,6 +279,52 @@ def spointers():
         return jsonify(result), 200
     except Exception as e:
         return jsonify({ 'error': str(e) }), 400
+    
+@app.route('/anomalize', methods=['POST'])
+def detect_anomaly():
+    try:
+        # Parse input form data
+        date_column = (request.form.get('date_column')).capitalize()
+        target_column = (request.form.get('target_column')).capitalize()
+        days = int(request.form.get('days'))
 
+        # Ensure file is uploaded
+        if 'file' not in request.files:
+            return jsonify({'error': 'Missing Excel file in request'}), 400
 
-#app.run(debug = True, port=5000)
+        file = request.files['file']
+        
+
+        # Read Excel into DataFrame
+        df = pd.read_excel(file, parse_dates=[date_column])
+
+        # Sort by date and limit to the last `days`
+        df.sort_values(by=date_column, inplace=True)
+        df = df[-days:]  # take last `days` rows
+
+        # Set the date column as index
+        df.set_index(date_column, inplace=True)
+
+        # Extract the series to analyze
+        series = df[target_column]
+
+        # Run anomaly detection
+        detector = AnomalyDetector()
+        resid = (detector.decompose(series.values))[2]
+        z_scores = detector.rolling_mad_zscore(resid)
+        daily_anoms = detector.flag_point_anomalies()
+        weekly_scores = detector.aggregate_window_scores()
+        weekly_anoms = detector.flag_window_anomalies()
+
+        return jsonify({
+            "dates": series.index.strftime('%Y-%m-%d').tolist(),
+            "sales": series.tolist(),
+            "residual": resid.tolist(),
+            "z_scores": z_scores.tolist(),
+            "daily_anomalies": daily_anoms.tolist(),
+            "weekly_scores": weekly_scores.tolist(),
+            "weekly_anomalies": weekly_anoms.tolist()
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
