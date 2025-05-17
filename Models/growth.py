@@ -162,10 +162,10 @@ def generate_interactions(factor1, factor2):
     lag_sel  = var_mod.select_order(12).aic
     var_res  = var_mod.fit(lag_sel)
 
-    summary = (f"# INTERACTIONS & LEADS/LAGS (VAR, {lag_sel} lags)\n\n")
+    
     var_coefs = var_res.coefs[0]
     labels    = [factor1, factor2]
-    summary += "### Dynamic cross-effect summary:\n\n"
+    summary = (f"### Dynamic cross-effect summary:\n\n")
     for i, metric in enumerate(labels):
         cross = [(j, var_coefs[i, j]) for j in range(len(labels)) if j != i]
         j, coef = max(cross, key=lambda x: abs(x[1]))
@@ -213,28 +213,28 @@ def generate_risk(FORECAST_HORIZON, factor1):
             'max_dd': max_dd, 'recovery': recov, 'var_es': var_es
         }
 
-    summary = "# RISK & DOWNTURN\n\n"
+    summary = "# VAR & KPI RISK ANALYSIS\n\n"
     for metric, info in risk.items():
         mu, sigma, vol = info['mu'], info['sigma'], info['vol_ewma']
         max_dd, recov  = info['max_dd'], info['recovery']
         summary += (
-            f"### {metric} :\n\n"
-            f"- Avg return {mu*100:.2f}%, σ {sigma*100:.2f}%, "
-            f"EWMA vol {vol*100:.2f}%\n\n"
+            f"### {metric.capitalize()} :\n\n"
+            f"**Avg return {mu*100:.2f}%, σ {sigma*100:.2f}%, "
+            f"EWMA vol {vol*100:.2f}%**\n\n"
         )
-        summary += f" - Max drawdown: {max_dd*100:.1f}%\n\n"
+        summary += f" **Max drawdown:** {max_dd*100:.1f}%\n\n"
         summary += (
-            f" - Recovery: {recov} periods\n\n"
-            if recov else " - Recovery: (no full recovery yet)\n\n"
+            f" **Recovery:** {recov} periods\n\n"
+            if recov else " **Recovery**: (no full recovery yet)\n\n"
         )
-        summary += " - VaR/ES at 5%:\n"
+        summary += " **VaR/ES at 5%**:\n\n"
         for h, ve in info['var_es'].items():
             summary += (
-                f" • {h:3d}-period: VaR = {ve['VaR']*100:.2f}%, "
-                f"ES = {ve['ES']*100:.2f}%\n\n"
+                f" **{h:3d}-period**: VaR = {ve['VaR']*100:.2f}%, "
+                f"**ES** = {ve['ES']*100:.2f}%\n\n"
             )
         summary += (
-            f"\n **Interpretation:** the worst-case 5% drop is "
+            f"\n **Interpretation:**\n\n the worst-case 5% drop is "
             f"{info['var_es'][1]['VaR']*100:.1f}% next period and "
             f"{info['var_es'][FORECAST_HORIZON]['VaR']*100:.1f}% over "
             f"{FORECAST_HORIZON} periods.\n\n"
@@ -286,11 +286,11 @@ def generate_forecast_outlook(FORECAST_HORIZON, factor1):
         delta_hi  = (p90[-1] - p90[0]) / abs(p90[0]) * 100
 
         summary += (
-            f"• **{metric}**:\n"
-            f"  Median: {p50[0]:.1f} → {p50[-1]:.1f} ({delta_med:+.1f}%)\n\n"
-            f"  Conservative (10th): {p10[0]:.1f} → {p10[-1]:.1f} ({delta_low:+.1f}%)\n\n"
-            f"  Optimistic (90th):  {p90[0]:.1f} → {p90[-1]:.1f} ({delta_hi:+.1f}%)\n\n"
-            f"\n **Interpretation:** median change of {delta_med:+.1f}% over "
+            f"**{metric.capitalize()}**:\n\n"
+            f"  **Median:** {p50[0]:.1f} → {p50[-1]:.1f} ({delta_med:+.1f}%)\n\n"
+            f"  **Conservative (10th):** {p10[0]:.1f} → {p10[-1]:.1f} ({delta_low:+.1f}%)\n\n"
+            f"  **Optimistic (90th):**  {p90[0]:.1f} → {p90[-1]:.1f} ({delta_hi:+.1f}%)\n\n"
+            f"\n **Interpretation:**\n\n median change of {delta_med:+.1f}% over "
             f"{FORECAST_HORIZON} periods, with downside of {delta_low:+.1f}% "
             f"and upside of {delta_hi:+.1f}%.\n\n"
             " **Takeaway:** base plans on the median path but prepare for the 10th percentile.\n\n"

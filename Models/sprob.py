@@ -179,4 +179,4 @@ def spoint():
             'insight':     insight
         })
 
-    return { 'factors': factors }
+    return {"factors": factors}

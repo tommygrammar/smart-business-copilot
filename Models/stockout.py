@@ -65,7 +65,7 @@ def stockouts(simulation_days):
 
     f"# Stockout Analysis\n"
     f"Based on 100,000 simulations with historical analysis,the product is likely to run out of stock within **{simulation_days}** days with a probability of **{stockout_probability:.2f}%**.\n"
-    f"For cases where stockout occurs, the average time to stockout is approximately **{avg_time_to_stockout:.2f}** days,with a 95% confidence range between **{lower_bound:.2f}** and **{upper_bound:.2f}** days. These findings directly inform inventory planning decisions to avoid overstocking or understocking.\n"
+    f"For cases where stockout occurs, the average time to stockout is approximately **{avg_time_to_stockout:.2f}** days,with a 95% confidence range between **{lower_bound:.2f}** and **{upper_bound:.2f}** days. \n"
     
     )
 

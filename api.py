@@ -7,7 +7,7 @@ from Models.deep_wave_driver_analysis_period_support import trend_generate_busin
 from Models.demand_analysis import demand_analysis
 from Models.event_probability_models import calculate_event_probability
 from Models.gradient_ascent_sensitivity_allocation_model import optimize
-from Models.growth import generate_forecast_outlook, generate_growth, generate_risk, generate_interactions, generate_trend
+from Models.growth import generate_forecast_outlook, generate_growth, generate_risk, generate_trend
 from Models.impact_analysis_model import promotional_impact
 from Models.official_business_summary import create_business_summary
 from Models.probability_sell_strategy import sell
@@ -27,10 +27,11 @@ CORS(app)
 #runs business twin simulations
 @app.route('/twin', methods = ['POST'])
 def query_endpoint():
+    
     try:
         data = request.get_json()
         rate = float(data['twinrate'])
-        factor = data['twinfactor'].replace(' ', '')        
+        factor = (data['twinfactor'].replace(' ', '')).lower()
         return business_twin(factor, rate ), 200
     except Exception as e:
         return jsonify(), 400
@@ -63,8 +64,8 @@ def query_comptetitor():
 def query_deepwave():
     try:
         data = request.get_json()
-        factor1=data['factor1'].replace(' ', '')
-        factor2=data['factor2'].replace(' ', '')
+        factor1=(data['factor1'].replace(' ', '')).lower()
+        factor2=(data['factor2'].replace(' ', '')).lower()
         period_length = data['period_length']
         
         return trend_generate_business_narrative(factor1, factor2, period_length), 200
@@ -77,7 +78,7 @@ def query_demand():
     try:
         data = request.get_json()
         days = data['n_days']
-        product = data['product'].replace(' ', '')
+        product = (data['product'].replace(' ', '')).lower()
 
         
         return demand_analysis(days, product), 200
@@ -89,7 +90,7 @@ def query_demand():
 def query_eventprobability():
     try:
         data = request.get_json()
-        factor = data['factor'].replace(' ', '')
+        factor = (data['factor'].replace(' ', '')).lower()
         target = data['target']
         period = data['period']
 
@@ -102,7 +103,7 @@ def query_eventprobability():
 def query_optimize():
     try:
         data = request.get_json()
-        mode = data['mode'].replace(' ', '')
+        mode = (data['mode'].replace(' ', '')).lower()
         target_revenue = data['target_revenue']
         s_change = data['s_change']
         m_change = data['m_change']
@@ -118,7 +119,7 @@ def query_trend():
 
     try:        
         data = request.get_json()
-        factor1 = data['trendFactor1'].replace(' ', '')        
+        factor1 = (data['trendFactor1'].replace(' ', '')).lower()
         return generate_trend(factor1), 200
     except Exception as e:
         return jsonify(), 400 
@@ -128,43 +129,31 @@ def query_trend():
 def query_growth():
     try:
         data = request.get_json()
-        factor1 = data['growthFactor1'].replace(' ', '')
+        factor1 = (data['growthFactor1'].replace(' ', '')).lower()
         return generate_growth(factor1), 200
     except Exception as e:
         return jsonify(), 400 
-#kpi interactions
-@app.route('/kpiinteractions', methods = ['POST'])
-def query_interactions():
-    try:
-        data = request.get_json()          
-        factor1 = data['iFactor1'].replace(' ', '')
-        factor2 = data['iFactor2'].replace(' ', '')
-        
-        
-        return generate_interactions(factor1, factor2), 200
-    except Exception as e:
-        return jsonify(), 400 
+
 #periodic kpi risks  
 @app.route('/kpirisk', methods = ['POST'])
 def query_kpirisk():
-
-    
+    data = request.get_json() 
+    print(data)    
     try:
-        data = request.get_json()  
-        
+               
               
-        forecast_horizon = data['target']
-        factor1 = data['factor'].replace(' ', '')        
+        forecast_horizon = data['horizon']
+        factor1 = (data['factor'].replace(' ', '')).lower()
         return (generate_risk(forecast_horizon,factor1))[0], 200
     except Exception as e:
-        return jsonify(), 400 
+        return e, 400 
 #periodic kpi forecasts
 @app.route('/kpiforecast', methods = ['POST'])
 def query_kpiforecast():
     try:
         data = request.get_json()
         forecast_horizon = data['horizon']
-        factor1 = data['factor'].replace(' ', '')
+        factor1 = (data['factor'].replace(' ', '')).lower()
         
         return generate_forecast_outlook(forecast_horizon,factor1), 200
     except Exception as e:
@@ -263,13 +252,14 @@ def assess():
 def driver():
     try:
         data = request.get_json()
-        factor1 = data['factor1'].replace(' ', '')
-        factor2 = data['factor2'].replace(' ', '')
+        factor1 = (data['factor1'].replace(' ', '')).lower()
+        factor2 = (data['factor2'].replace(' ', '')).lower()
         
         return generate_business_narrative(factor1, factor2), 200
     except Exception as e:
         return jsonify(), 400 
     
+
 #runs business twin simulations
 @app.route('/spointers', methods=['POST'])
 def spointers():
@@ -279,7 +269,7 @@ def spointers():
         return jsonify(result), 200
     except Exception as e:
         return jsonify({ 'error': str(e) }), 400
-    
+        
 @app.route('/anomalize', methods=['POST'])
 def detect_anomaly():
     try:

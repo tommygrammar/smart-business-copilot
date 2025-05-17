@@ -96,7 +96,7 @@ def optimize(mode, target_revenue, fixed_m_change, fixed_s_change):
         for iteration in range(max_iterations):
             #print(f"iteration: {iteration, tol}")
             grad = compute_gradient(params, t_values)
-            if mode == "salesconstant":
+            if mode == "sales_constant":
                 params[0] += learning_rate * grad[0]
                 params[1] = fixed_s_change if fixed_s_change is not None else initial_params[1]
             elif mode == "marketing_constant":

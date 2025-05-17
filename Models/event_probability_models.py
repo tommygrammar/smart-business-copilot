@@ -215,8 +215,7 @@ def calculate_event_probability(factor, threshold, T, n_paths=100000,
     # Create a non-technical, user-friendly explanation.
     explanation = f"""
 --------------------------------------------------
-## Event Probability Report for '{factor.capitalize()}'
-Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+# Event Probability Report for '{factor.capitalize()}'
 
 **1. Summary of your data:**
    - **Current {factor}**: {x0:.2f}
@@ -224,30 +223,16 @@ Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
    - A 95% confidence range for the daily change is approximately **[{ci_mu[0]:.4f}, {ci_mu[1]:.4f}] **
      and for daily fluctuations about **[{ci_sigma[0]:.4f}, {ci_sigma[1]:.4f}].**
 
-**2. Model choice:**
-   - You are using **{'Geometric' if use_gbm else 'Arithmetic'} Brownian Motion**,
-     which means your forecast is based on a {('multiplicative' if use_gbm else 'additive')} process.
 
-**3. Time-Varying Dynamics:**
+**2. Time-Varying Dynamics:**
    - { "Using a rolling-window analysis, recent windows suggest a slightly varying trend." if use_rolling_window 
        else "The model assumes constant daily behavior over the forecast period." }
    {rolling_summary}
 
-4. Simulation details:
-   - We simulated {n_paths} possible future scenarios over the next {T} days using a refined time step.
-   - The chance estimates are based on these simulated paths.
-
-5. Model validation:
-   - A quick check on daily changes shows the average residual is {resid_stats['mean']:.4e} with a variability of {resid_stats['std']:.4f}.
-     This suggests that the basic assumptions of the model hold reasonably well.
-
-6. What do the numbers mean?
-   - Based on the simulation, there is about a {prob_mc:.2%} chance of reaching the target level of {threshold:.2f} within {T} days.
-   - When the threshold is reached, it takes on average {expected_time:.2f} days, but expect some uncertainty (±{time_se:.2f} days).
-   - { "For the arithmetic model, the direct calculation gave a probability of " + f"{prob_analytical:.2%}." if (not use_gbm and prob_analytical is not None) else "Analytical formulas for GBM are more complex, so we rely on the simulation here." }
-
-In plain terms:
-Imagine you set a specific goal for your {factor}. With the given trends and fluctuations, there’s about a {prob_mc:.2%} chance of reaching that goal within the next {T} days. This information can help you set more realistic targets and prepare strategies accordingly.
+3. What do the numbers mean?
+   - Based on the simulation, there is about a **{prob_mc:.2%}** chance of reaching the target level of **{threshold:.2f}** within {T} days.
+   - When the threshold is reached, it takes on average **{expected_time:.2f}** days, but expect some uncertainty (±**{time_se:.2f}** days).
+   - { "For the arithmetic model, the direct calculation gave a probability of **" + f"{prob_analytical:.2%}.**" if (not use_gbm and prob_analytical is not None) else "Analytical formulas for GBM are more complex, so we rely on the simulation here." }
 
 --------------------------------------------------
 """

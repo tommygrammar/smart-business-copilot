@@ -419,19 +419,19 @@ def trend_generate_business_narrative(factor1, factor2, period_length):
     predicted2 = wave2["predicted"]
     trend1 = predicted1[-1] - predicted1[-2]
     if trend1 > 0:
-        forecast_statement1 = f"{factor1.capitalize()} is forecasted to continue its upward trend, increasing by about {trend1:.2f} units per period."
+        forecast_statement1 = f"**{factor1.capitalize()}** is forecasted to continue its upward trend, increasing by about {trend1:.2f} units per period."
     elif trend1 < 0:
-        forecast_statement1 = f"{factor1.capitalize()} is expected to decline, dropping by roughly {abs(trend1):.2f} units per period."
+        forecast_statement1 = f"**{factor1.capitalize()}** is expected to decline, dropping by roughly {abs(trend1):.2f} units per period."
     else:
-        forecast_statement1 = f"{factor1.capitalize()} appears stable in the upcoming periods."
+        forecast_statement1 = f"**{factor1.capitalize()}** appears stable in the upcoming periods."
     
     trend2 = predicted2[-1] - predicted2[-2]
     if trend2 > 0:
-        forecast_statement2 = f"{factor2.capitalize()} is projected to rise, with an increase of approximately {trend2:.2f} units per period."
+        forecast_statement2 = f"**{factor2.capitalize()}** is projected to rise, with an increase of approximately {trend2:.2f} units per period."
     elif trend2 < 0:
-        forecast_statement2 = f"{factor2.capitalize()} is forecasted to fall, decreasing by about {abs(trend2):.2f} units per period."
+        forecast_statement2 = f"**{factor2.capitalize()}** is forecasted to fall, decreasing by about {abs(trend2):.2f} units per period."
     else:
-        forecast_statement2 = f"{factor2.capitalize()} is likely to remain steady over the next few periods."
+        forecast_statement2 = f"**{factor2.capitalize()}** is likely to remain steady over the next few periods."
     
     # New Section: Observed Trend from the Last 5 Data Points in the Dominant Cycle
     dom_wave1 = wave1["refined_wave"]
@@ -469,11 +469,11 @@ def trend_generate_business_narrative(factor1, factor2, period_length):
     # Compose the final narrative
     narrative = (
         "-----------------------------\n\n"
-        f" #### {factor1.capitalize()} and {factor2.capitalize()} for {period_length} days Summary:\n\n"
-        f"Trend Predictions and Forecasts:\n"
+        f" # {factor1.capitalize()} and {factor2.capitalize()} for {period_length} days Summary:\n\n"
+        f" ## Trend Predictions and Forecasts:\n"
         f"  - {forecast_statement1}\n"
         f"  - {forecast_statement2}\n\n"
-        f"Dominant Cycle Characteristics:\n"
+        f" ## Dominant Cycle Characteristics:\n"
         f"  For {factor1}:\n"
         f"    - Dominant cycle period: {details1['period']:.2f} days\n"
         f"    - Amplitude: {details1['amplitude']:.2f}\n"
@@ -482,14 +482,14 @@ def trend_generate_business_narrative(factor1, factor2, period_length):
         f"    - Dominant cycle period: {details2['period']:.2f} days\n"
         f"    - Amplitude: {details2['amplitude']:.2f}\n"
         f"    - {peak_duration_statement2} {trough_duration_statement2}\n\n"
-        f"Cycle Event Timing and Extreme Values:\n"
+        f" ## Cycle Event Timing and Extreme Values:\n"
         f"  - {cycle_behavior_statement1}\n"
         f"  - {additional_statement1}\n"
         f"  - {observed_trend1}\n\n"
         f"  - {cycle_behavior_statement2}\n"
         f"  - {additional_statement2}\n"
         f"  - {observed_trend2}\n\n"
-        f"Comparative Insights:\n"
+        f" ## Comparative Insights:\n"
         f"  - {comp_statement}\n"
         f"{comparison['friendly_summary']}\n"
         f"{comparison['match_summary']}\n"

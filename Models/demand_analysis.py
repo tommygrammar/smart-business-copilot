@@ -86,13 +86,11 @@ def demand_analysis(n_days, product_stuff):
 
     # -------- Non-Technical Dynamic Output --------
     non_technical_output = (
-    f"# Product Demand Probability Analysis for **{selected_product['product_name']} ({selected_product['product_id']}**):\n"
-    f"- Observed period (days): **{n_observations}**\n"
+    f"# Product Demand Probability Analysis for **{product_stuff}**:\n"
+    f"-Observed period (days): **{n_observations}**\n"
     f"- Days with a purchase: **{n_success}** \n"
     f"- Estimated daily purchase probability: **{p_expected:.2f}**\n"
     f"- 95% Credible Interval: **[{credible_interval[0]:.2f}, {credible_interval[1]:.2f}]**\n"
-
-    f"These insights can guide stocking decisions to avoid overstocking or understocking.\n"
     )
 
     #print(non_technical_output)

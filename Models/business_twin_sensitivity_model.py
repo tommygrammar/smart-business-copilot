@@ -218,13 +218,12 @@ def business_twin(factor, rate):
     # -------------------------------------------------------------------------
     narrative_summary = (
         "-----------------------------\n\n"
-        "## Simulation Summary\n\n"
-        f"Driver Factor: **{main.capitalize()}**\n"
+        "# Business Twin Factor Simulation\n\n"
+        f"Driver Factor: **{main.capitalize()}**\n\n"
         f"Rate: {rate*100:.0f}%\n\n"
-        "### 1. Unified Business Profile Insight:\n"
-        "--------------------------------------\n"
-        f"Overall, increasing **{main} by {rate*100:.0f}%** results in an average change of {business_profile_change:.2f}% in the unified business profile.\n\n"
-        "### 2. Future Scenario Comparison (Individual Factors):\n"
+        f"Average Business Profile Change: {business_profile_change:.2f}%\n\n\n "
+
+        "## Future Scenario Comparison (Individual Factors):\n"
         "------------------------------\n"
         "Below is a detailed comparison of the baseline forecast versus the forecast when the driver factor is increased:\n\n"
         "#### Factor                 | Change (%)\n"

@@ -81,14 +81,14 @@ def weekly_cashflow_sales_analysis(unit_price, initial_cash, n_forecast_days  ):
     # -------------------------------
 
     output_summary = (
-  f" ## {n_forecast_days} days Cash Flow Analysis:\n"
+  f" # {n_forecast_days} days Cash Flow Analysis:\n"
     f"-------------------------------------------\n"
-   f" Interpretation:\n"
+   f" **Interpretation:**\n"
     f"-------------\n"
 
-    f"- Your business is likely to sell around **{mean_weekly_sales:.2f}** units in the upcoming week (with a 95% confidence interval between **{sales_ci_lower:.2f} and {sales_ci_upper:.2f} units)**.\n"
-    f"- Considering the current revenue **(at {unit_price} per unit)** and typical daily operating expenses, the projected final cash flow is expected to be **{mean_cash_flow:.2f}** units, with a 95% confidence interval of **[{cashflow_ci_lower:.2f}, {cashflow_ci_upper:.2f}]**.\n"
-    f"- There is a **{negative_cashflow_probability:.2f}%** chance that the cash flow will be negative, indicating potential financial risk if conditions do not improve.\n"
+    f"- Your business is likely to sell around **{mean_weekly_sales:.2f}** units in the upcoming week (with a 95% confidence interval between **{sales_ci_lower:.2f} and {sales_ci_upper:.2f} units)**.\n\n"
+    f"- Considering the current revenue **(at {unit_price} per unit)** and typical daily operating expenses, the projected final cash flow is expected to be **{mean_cash_flow:.2f}** units, with a 95% confidence interval of **[{cashflow_ci_lower:.2f}, {cashflow_ci_upper:.2f}]**.\n\n"
+    f"- There is a **{negative_cashflow_probability:.2f}%** chance that the cash flow will be negative, indicating potential financial risk if conditions do not improve.\n\n"
 
 
     )

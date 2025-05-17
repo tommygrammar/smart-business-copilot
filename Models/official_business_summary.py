@@ -66,7 +66,7 @@ def create_business_summary():
         "**Key Revenue Drivers:**\n\n"
         f"  **Strongest:** {', '.join(strong_drivers) if strong_drivers else 'No strengths are present. This is bad.'}\n\n"
         f"  **Weakest:** {', '.join(weak_drivers) if weak_drivers else 'No weaknesses found. Bloody brilliant. This means you need to focus on optimizing.'}\n\n"
-        f"  **To note:**  {extra if extra else 'N/A'}\n\n"
+        
     )
 
     result = {

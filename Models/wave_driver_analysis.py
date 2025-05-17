@@ -2,6 +2,7 @@ import numpy as np
 from numpy.fft import fft, ifft
 from scipy.signal import find_peaks
 from Data.business_data import historical_data
+from Models.growth import generate_interactions
 
 data = historical_data
 # ---------------------------
@@ -221,7 +222,9 @@ def wave_comparative_analysis(
 # Configured Business Narrative Generation Function
 # ---------------------------
 
+
 def generate_business_narrative(factor1, factor2):
+    other = generate_interactions(factor1, factor2)
     """
     Runs the wave analysis and comparative analysis for two factors from a global
     data source and generates a business narrative summarizing the predictions and cyclic comparisons.
@@ -307,9 +310,10 @@ def generate_business_narrative(factor1, factor2):
 
     narrative = (
         "-----------------------------\n\n"
-        f"### {factor1.capitalize()} and {factor2.capitalize()} Summary:\n\n"
+        f"# {factor1.capitalize()} and {factor2.capitalize()} Summary:\n\n"
         f"{statement1}{statement2}"
-        f"Furthermore, the cyclic patterns between {factor1} and {factor2} indicate that {comp_statement.lower()}"
+        f"Furthermore, the cyclic patterns between {factor1} and {factor2} indicate that {comp_statement.lower()}\n\n"
+        f"{other}"
     )
     
     result = {
