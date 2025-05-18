@@ -4,15 +4,14 @@ from Models.business_twin_sensitivity_model import business_twin
 from Models.cash_flow import weekly_cashflow_sales_analysis
 from Models.competitor_analysis import bayesian_competitor_analysis
 from Models.deep_wave_driver_analysis_period_support import trend_generate_business_narrative
-from Models.demand_analysis import demand_analysis
+
 from Models.event_probability_models import calculate_event_probability
 from Models.gradient_ascent_sensitivity_allocation_model import optimize
 from Models.growth import generate_forecast_outlook, generate_growth, generate_risk, generate_trend
 from Models.impact_analysis_model import promotional_impact
 from Models.official_business_summary import create_business_summary
 from Models.probability_sell_strategy import sell
-from Models.product_segmentation import type_shit
-from Models.risk_model import run_risk_analysis
+
 from Models.sales_forecast import forecast_sales
 from Models.stockout import stockouts
 from Models.strengths_weakness_assessment_model import find_strengths, find_weaknesses, losses
@@ -72,19 +71,6 @@ def query_deepwave():
     except Exception as e:
         return jsonify(), 400
     
-#runs demand analysis
-@app.route('/demand', methods = ['POST'])
-def query_demand():
-    try:
-        data = request.get_json()
-        days = data['n_days']
-        product = (data['product'].replace(' ', '')).lower()
-
-        
-        return demand_analysis(days, product), 200
-    except Exception as e:
-        return jsonify(), 400
-
  #runs event probabilities   
 @app.route('/eventprobability', methods = ['POST'])
 def query_eventprobability():
@@ -189,26 +175,6 @@ def sellpointers():
     except Exception as e:
         return jsonify(), 400 
     
-#products segmentations
-@app.route('/productsegmentation', methods = ['POST'])
-def productsegmentation():
-    try:
-        data = request.get_json()
-        
-        return type_shit(), 200
-    except Exception as e:
-        return jsonify(), 400 
-#
-@app.route('/targetrisk', methods = ['POST'])
-def targetrisk():
-    try:
-        data = request.get_json()
-        factor = data['factor'].replace(' ', '')
-        target = data['target']
-        
-        return run_risk_analysis(factor, target), 200
-    except Exception as e:
-        return jsonify(), 400 
 
 @app.route('/salesforecast', methods = ['POST'])
 def saleforecast():
@@ -318,3 +284,5 @@ def detect_anomaly():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+
+#app.run(debug = True)

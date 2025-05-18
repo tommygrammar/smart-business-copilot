@@ -2,6 +2,7 @@ import numpy as np
 from scipy.stats import norm
 from datetime import datetime
 from Data.business_data import historical_data  # imports the latest available data
+from Models.corrective_assessment_support_for_risk_model import corrective
 
 
 ##############################
@@ -212,27 +213,33 @@ def calculate_event_probability(factor, threshold, T, n_paths=100000,
     prob_mc, prob_se, expected_time, time_se, _ = monte_carlo_probability(
         x0, mu, sigma, threshold, T, dt, n_paths, use_gbm)
     
+    increase = corrective(factor)
+    
     # Create a non-technical, user-friendly explanation.
     explanation = f"""
 --------------------------------------------------
 # Event Probability Report for '{factor.capitalize()}'
 
-**1. Summary of your data:**
+## 1. Summary of your data:
    - **Current {factor}**: {x0:.2f}
    - **Daily average change:** {mu:.4f} (with a typical range of ±{sigma:.4f})
-   - A 95% confidence range for the daily change is approximately **[{ci_mu[0]:.4f}, {ci_mu[1]:.4f}] **
-     and for daily fluctuations about **[{ci_sigma[0]:.4f}, {ci_sigma[1]:.4f}].**
+   - A 95% confidence range for the daily change is approximately [**{ci_mu[0]:.4f}**, **{ci_mu[1]:.4f}**]
+     and for daily fluctuations about [**{ci_sigma[0]:.4f}**, **{ci_sigma[1]:.4f}**].
 
 
-**2. Time-Varying Dynamics:**
+## 2. Time-Varying Dynamics:
    - { "Using a rolling-window analysis, recent windows suggest a slightly varying trend." if use_rolling_window 
        else "The model assumes constant daily behavior over the forecast period." }
    {rolling_summary}
 
-3. What do the numbers mean?
+## 3. What do the numbers mean?
    - Based on the simulation, there is about a **{prob_mc:.2%}** chance of reaching the target level of **{threshold:.2f}** within {T} days.
    - When the threshold is reached, it takes on average **{expected_time:.2f}** days, but expect some uncertainty (±**{time_se:.2f}** days).
-   - { "For the arithmetic model, the direct calculation gave a probability of **" + f"{prob_analytical:.2%}.**" if (not use_gbm and prob_analytical is not None) else "Analytical formulas for GBM are more complex, so we rely on the simulation here." }
+   - { "For the arithmetic model, the direct calculation gave a probability of **" + f"{prob_analytical:.2%}.**" if (not use_gbm and prob_analytical is not None) else "Analytical formulas for GBM are more complex, so we rely on the simulation here."    
+      }\n\n
+## 4. What you can do: \n\n
+    To increase the probabilities of reaching it, focus on these levers for maximum effect:{increase}
+      
 
 --------------------------------------------------
 """
