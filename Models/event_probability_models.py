@@ -246,5 +246,4 @@ def calculate_event_probability(factor, threshold, T, n_paths=100000,
     
     return explanation
 
-# Example usage:
-#print(calculate_event_probability("revenue", 800, 365, use_gbm=False, use_rolling_window=True, plot_residuals=False))
+

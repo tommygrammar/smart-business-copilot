@@ -68,7 +68,5 @@ def stockouts(simulation_days):
     f"For cases where stockout occurs, the average time to stockout is approximately **{avg_time_to_stockout:.2f}** days,with a 95% confidence range between **{lower_bound:.2f}** and **{upper_bound:.2f}** days. \n"
     
     )
-
-    #print(output_summary)
     return output_summary
 

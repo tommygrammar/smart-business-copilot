@@ -297,12 +297,3 @@ def generate_forecast_outlook(FORECAST_HORIZON, factor1):
         )
     return summary
 
-# =============================================================================
-#  RUN EXAMPLES
-# =============================================================================
-
-#print(generate_interactions('revenue','sales'))
-#print(generate_growth('sales', 'revenue', 'cost_efficiency'))
-
-#print(generate_forecast_outlook(200, 'sales', 'revenue', 'marketing'))
-

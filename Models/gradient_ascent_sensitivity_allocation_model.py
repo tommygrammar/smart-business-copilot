@@ -138,5 +138,4 @@ def optimize(mode, target_revenue, fixed_m_change, fixed_s_change):
 
     return result
 
-# Example usage:
-#print(optimize("marketing_constant", 1200, 0.04, fixed_s_change))
+

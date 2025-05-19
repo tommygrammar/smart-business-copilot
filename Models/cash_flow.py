@@ -93,5 +93,4 @@ def weekly_cashflow_sales_analysis(unit_price, initial_cash, n_forecast_days  ):
 
     )
 
-    #print(output_summary)
     return output_summary

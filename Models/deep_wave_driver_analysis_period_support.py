@@ -497,14 +497,4 @@ def trend_generate_business_narrative(factor1, factor2, period_length):
     
     return narrative
 
-# ---------------------------
-# Example Usage:
-# ---------------------------
-# Ensure that 'data' is defined globally, e.g.:
-# data = {
-#     "sales": np.random.randn(500),
-#     "revenue": np.random.randn(500)
-# }
-#
-# To analyze the last 60 days, simply call:
-#print(trend_generate_business_narrative("sales", "revenue", 60))
+

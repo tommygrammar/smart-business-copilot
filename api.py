@@ -4,20 +4,18 @@ from Models.business_twin_sensitivity_model import business_twin
 from Models.cash_flow import weekly_cashflow_sales_analysis
 from Models.competitor_analysis import bayesian_competitor_analysis
 from Models.deep_wave_driver_analysis_period_support import trend_generate_business_narrative
-
 from Models.event_probability_models import calculate_event_probability
 from Models.gradient_ascent_sensitivity_allocation_model import optimize
 from Models.growth import generate_forecast_outlook, generate_growth, generate_risk, generate_trend
 from Models.impact_analysis_model import promotional_impact
 from Models.official_business_summary import create_business_summary
 from Models.probability_sell_strategy import sell
-
-from Models.sales_forecast import forecast_sales
 from Models.stockout import stockouts
 from Models.strengths_weakness_assessment_model import find_strengths, find_weaknesses, losses
 from Models.wave_driver_analysis import generate_business_narrative
 from Models.sprob import spoint
 from Models.AnomalyDetection import AnomalyDetector
+
 import pandas as pd
 
 
@@ -176,17 +174,6 @@ def sellpointers():
         return jsonify(), 400 
     
 
-@app.route('/salesforecast', methods = ['POST'])
-def saleforecast():
-    try:
-        data = request.get_json()
-        horizon = data['horizon']
-
-        
-        return forecast_sales(horizon), 200
-    except Exception as e:
-        return jsonify(), 400 
-
 @app.route('/stockout', methods = ['POST'])
 def stockout():
     try:
@@ -226,7 +213,7 @@ def driver():
         return jsonify(), 400 
     
 
-#runs business twin simulations
+#runs sales analytics for thure sell mode
 @app.route('/spointers', methods=['POST'])
 def spointers():
     try:
@@ -284,5 +271,3 @@ def detect_anomaly():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
-
-#app.run(debug = True)

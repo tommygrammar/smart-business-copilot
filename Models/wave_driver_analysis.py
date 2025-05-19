@@ -325,16 +325,4 @@ def generate_business_narrative(factor1, factor2):
     }
     
     return result
-# ---------------------------
-# Example Usage:
-# ---------------------------
-# Make sure 'data' is defined globally, for example:
-# data = {
-#     "sales": np.random.randn(100),
-#     "revenue": np.random.randn(100)
-# }
-#
-# Now, simply call:
-#print(f"{generate_business_narrative("sales", "revenue")}\n\n")
-
 

@@ -249,5 +249,3 @@ def business_twin(factor, rate):
 
     return narrative_summary
 
-# Example usage:
-#print(business_twin("sales", 0.29))
